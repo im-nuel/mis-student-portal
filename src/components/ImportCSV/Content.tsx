@@ -2,7 +2,7 @@ import { Box, Button, Stepper } from "@mantine/core";
 import { FC, useState } from "react";
 import { UploadPage } from "./UploadPage";
 import { SelectionPage } from "./SelectionPage";
-import { MatchColumnPage } from "./MatchColumnPage";
+import { MatchColumnPage } from "./MatchColumnPage/MatchColumnPage";
 import { ValidationPage } from "./ValidationData";
 import { processRows } from "./process";
 

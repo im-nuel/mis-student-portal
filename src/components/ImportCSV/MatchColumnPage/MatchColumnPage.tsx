@@ -13,8 +13,9 @@ import {
   IconRestore,
   IconX,
 } from "@tabler/icons-react";
-import { FC, useEffect, useMemo, useState } from "react";
-import { FieldProps } from "./Content";
+import { FC, useMemo, useState } from "react";
+import { FieldProps } from "../Content";
+import { MatchPickerColumn } from "./MatchPickerColumn";
 
 type FieldPick = {
   key: string;
@@ -24,7 +25,7 @@ type FieldPick = {
 export const MatchColumnPage: FC<{
   data: string[][];
   headerIndex: number;
-  fields: Omit<FieldProps, "pick">[];
+  fields: FieldProps[];
   onNext: (fieldPick: FieldPick[]) => void;
 }> = ({ headerIndex, data, fields: defaultFields, onNext }) => {
   const columns = useMemo(() => {
@@ -95,6 +96,7 @@ export const MatchColumnPage: FC<{
           >
             <Box
               sx={{
+                pointerEvents: "none",
                 position: "absolute",
                 backgroundImage: `linear-gradient(to bottom, rgba(255,255,255, 0), rgba(255,255,255, 1))`,
                 top: 0,
@@ -198,6 +200,7 @@ export const MatchColumnPage: FC<{
           >
             <Box
               sx={{
+                pointerEvents: "none",
                 position: "absolute",
                 backgroundImage: `linear-gradient(to bottom, rgba(255,255,255, 0), rgba(255,255,255, 1))`,
                 top: 0,
@@ -208,71 +211,28 @@ export const MatchColumnPage: FC<{
             />
             <Flex>
               {columns.map((column) => (
-                <Flex
-                  key={column.title}
-                  sx={{ width: columnWidth, whiteSpace: "nowrap" }}
-                  px={"xl"}
-                  py={"sm"}
-                  align={"center"}
-                >
-                  {ignoredFields[column.key] ? (
-                    <Box>Column ignored</Box>
-                  ) : (
-                    <>
-                      <Box>
-                        <Select
-                          searchable
-                          clearable
-                          allowDeselect
-                          withinPortal
-                          data={defaultFields.map((field) => {
-                            const selectedField = fieldPick.map((f) => f.field);
-                            const currentField =
-                              fieldPick[selectedField.indexOf(field.key)];
-                            return {
-                              label: field.label,
-                              value: field.key,
-                              disabled:
-                                selectedField.indexOf(field.key) !== -1 &&
-                                currentField?.field !== column.key,
-                            };
-                          })}
-                          value={
-                            fieldPick.find((f) => f.key === column.key)?.field
+                <MatchPickerColumn
+                  column={{
+                    ...column,
+                    ignored: ignoredFields[column.key],
+                  }}
+                  columnWidth={columnWidth}
+                  fields={defaultFields}
+                  fieldPick={fieldPick}
+                  onFieldPick={(key, value) => {
+                    console.log(key, value);
+                    setFieldPick((fields) => {
+                      return [
+                        ...fields.map((field) => {
+                          if (field.key === key) {
+                            field.field = value as string;
                           }
-                          onChange={(key) => {
-                            setFieldPick((fields) => {
-                              return [
-                                ...fields.map((field) => {
-                                  if (field.key === column.key) {
-                                    field.field = key as string;
-                                  }
-                                  return field;
-                                }),
-                              ];
-                            });
-                          }}
-                        />
-                      </Box>
-                      <Box ml="md">
-                        <ActionIcon
-                          tabIndex={-1}
-                          radius="xl"
-                          sx={{
-                            pointerEvents: "none",
-                          }}
-                        >
-                          {fieldPick.find((f) => f.key === column.key)
-                            ?.field ? (
-                            <IconCircleCheck color="green" />
-                          ) : (
-                            <IconCircle />
-                          )}
-                        </ActionIcon>
-                      </Box>
-                    </>
-                  )}
-                </Flex>
+                          return field;
+                        }),
+                      ];
+                    });
+                  }}
+                />
               ))}
             </Flex>
             <Box sx={{ height: 100 }}></Box>
