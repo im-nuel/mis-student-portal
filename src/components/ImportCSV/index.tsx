@@ -1,62 +1,59 @@
-import { Button, Modal } from "@mantine/core";
+import { Box, Button, Group, Modal, Title } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
-import { Content } from "./Content";
+import { Content, FieldProps } from "./Content";
+import { FC } from "react";
+import { Text } from "@mantine/core";
 
-export const ImportCSV = () => {
+export const ImportCSV: FC<{
+  fields: Omit<FieldProps, "pick">[];
+  onSave: (data: { [key: string]: any }) => void;
+}> = ({ fields, onSave }) => {
   const [opened, { open, close }] = useDisclosure(true);
+  const [openedPromp, { open: openPrompt, close: closePrompt }] =
+    useDisclosure(false);
 
   return (
     <>
       <Button onClick={() => open()}>Import CSV</Button>
       <Modal
         opened={opened}
-        onClose={close}
+        onClose={openPrompt}
         withCloseButton={false}
         size={"100%"}
         padding={0}
       >
         <Content
-          fields={[
-            {
-              label: "Name",
-              key: "name",
-              example: "John Doe",
-            },
-            {
-              label: "Email",
-              key: "email",
-              example: "johndoe@example.com",
-            },
-            {
-              label: "Phone",
-              key: "phone",
-              example: "1234567890",
-            },
-            {
-              label: "Address",
-              key: "address",
-              example: "123 Main St",
-            },
-            {
-              label: "City",
-              key: "city",
-              example: "New York",
-            },
-            {
-              label: "State",
-              key: "state",
-              example: "NY",
-            },
-            {
-              label: "Zip",
-              key: "zip",
-              example: "12345",
-            },
-          ]}
-          onConfirm={function (): void {
-            throw new Error("Function not implemented.");
+          fields={fields}
+          onConfirm={function (data): void {
+            onSave(data);
+            close();
           }}
         />
+      </Modal>
+
+      <Modal
+        title="Exit import flow"
+        centered
+        opened={openedPromp}
+        onClose={closePrompt}
+      >
+        <Box>
+          <Text>Are you sure you want to exit import flow?</Text>
+        </Box>
+        <Group mt="lg" position="right">
+          <Button variant="outline" onClick={closePrompt}>
+            Cancel
+          </Button>
+          <Button
+            color="red"
+            onClick={() => {
+              closePrompt();
+              close();
+            }}
+          >
+            Exit
+          </Button>
+        </Group>
       </Modal>
     </>
   );

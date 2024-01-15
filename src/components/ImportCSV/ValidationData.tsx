@@ -12,7 +12,6 @@ export const ValidationPage: FC<{
       key,
       name: key,
       renderHeaderCell: (props) => {
-        console.log(props);
         return (
           <Box sx={{ textTransform: "uppercase", fontSize: 12 }}>
             {props.column.name}

@@ -17,7 +17,10 @@ export const studentSchema = Type.Object(
     age: Type.Number(),
     place_of_birth: Type.String(),
     date_of_birth: Type.String(),
-    gender: Type.String(),
+    gender: Type.Enum({
+      male: "male",
+      female: "female",
+    }),
     address: Type.String(),
     phone_number: Type.String(),
     email: Type.String(),

@@ -75,7 +75,14 @@ export const MatchColumnPage: FC<{
             overflowX: "auto",
           }}
         >
-          <Title order={3} mb="md">
+          <Title
+            order={3}
+            mb="md"
+            sx={{
+              position: "sticky",
+              left: 0,
+            }}
+          >
             Your table
           </Title>
           <Box
@@ -127,10 +134,12 @@ export const MatchColumnPage: FC<{
                           setFieldPick((fields) => {
                             return [
                               ...fields.map((field) => {
-                                return {
-                                  ...field,
-                                  field: null,
-                                };
+                                if (field.key === column.key)
+                                  return {
+                                    ...field,
+                                    field: null,
+                                  };
+                                return field;
                               }),
                             ];
                           });
@@ -168,7 +177,15 @@ export const MatchColumnPage: FC<{
               </Flex>
             ))}
           </Box>
-          <Title order={3} mt="lg" mb="md">
+          <Title
+            order={3}
+            mt="lg"
+            mb="md"
+            sx={{
+              position: "sticky",
+              left: 0,
+            }}
+          >
             Will become
           </Title>
           <Box

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { IResourceComponentsProps } from "@refinedev/core";
 import { useTable } from "@refinedev/react-table";
 import { ColumnDef, flexRender } from "@tanstack/react-table";
@@ -12,6 +12,9 @@ import {
 } from "@refinedev/mantine";
 import { StudentSchema } from "../../provider/schema/student.schema";
 import { ImportCSV } from "../../components/ImportCSV";
+import { studentSchema } from "../../provider/schema/student";
+import { FieldProps } from "../../components/ImportCSV/Content";
+import { studentImportSchema } from "./studentImportSchema";
 
 export const StudentList: React.FC<IResourceComponentsProps> = () => {
   const columns = React.useMemo<ColumnDef<StudentSchema>[]>(
@@ -78,8 +81,22 @@ export const StudentList: React.FC<IResourceComponentsProps> = () => {
     },
   }));
 
+  const fields = useMemo<FieldProps[]>(() => {
+    console.log(studentImportSchema);
+    return studentImportSchema;
+  }, []);
+
   return (
-    <List headerButtons={<ImportCSV />}>
+    <List
+      headerButtons={
+        <ImportCSV
+          fields={fields}
+          onSave={function (data: { [key: string]: any }): void {
+            throw new Error("Function not implemented.");
+          }}
+        />
+      }
+    >
       <ScrollArea>
         <Table highlightOnHover>
           <thead>

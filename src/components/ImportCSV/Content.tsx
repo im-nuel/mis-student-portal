@@ -6,16 +6,36 @@ import { MatchColumnPage } from "./MatchColumnPage";
 import { ValidationPage } from "./ValidationData";
 import { processRows } from "./process";
 
+export type FieldType =
+  | {
+      type: "input";
+    }
+  | {
+      type: "select";
+      options: { label: string; value: string }[];
+    }
+  | {
+      type: "checkbox";
+    }
+  | {
+      type: "date";
+    };
+
 export type FieldProps = {
   label: string;
   key: string;
   example: string;
-  pick: string[];
+  description?: string;
+  fieldType: FieldType;
+};
+
+export type PickFieldProps = FieldProps & {
+  pick: string | null | undefined;
 };
 
 export const Content: FC<{
-  onConfirm: () => void;
-  fields: Omit<FieldProps, "pick">[];
+  onConfirm: (data: { [key: string]: any }[]) => void;
+  fields: FieldProps[];
 }> = ({ fields: defaultFields, onConfirm }) => {
   const [active, setActive] = useState(0);
   const [rows, setRows] = useState<string[][]>([]);
@@ -37,6 +57,7 @@ export const Content: FC<{
       </Box>
       {active === 0 && (
         <UploadPage
+          fields={fields}
           onNext={(rows) => {
             setRows(rows);
             setActive(1);
@@ -62,7 +83,13 @@ export const Content: FC<{
           headerIndex={headerIndex}
           data={rows}
           onNext={(fieldPick) => {
-            setData(processRows(rows, headerIndex, fieldPick));
+            const transformedFields: PickFieldProps[] = fields.map((field) => {
+              return {
+                ...field,
+                pick: fieldPick.find((f) => f.field === field.key)?.key,
+              };
+            });
+            setData(processRows(rows, headerIndex, transformedFields));
             setActive(3);
           }}
         />
@@ -71,7 +98,7 @@ export const Content: FC<{
         <ValidationPage
           data={data}
           onConfirm={function (): void {
-            throw new Error("Function not implemented.");
+            onConfirm(data);
           }}
         />
       )}
