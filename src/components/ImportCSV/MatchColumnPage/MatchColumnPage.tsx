@@ -3,16 +3,11 @@ import {
   Box,
   Button,
   Flex,
-  Select,
+  ScrollArea,
   Title,
   useMantineTheme,
 } from "@mantine/core";
-import {
-  IconCircle,
-  IconCircleCheck,
-  IconRestore,
-  IconX,
-} from "@tabler/icons-react";
+import { IconRestore, IconX } from "@tabler/icons-react";
 import { FC, useMemo, useState } from "react";
 import { FieldProps } from "../Content";
 import { MatchPickerColumn } from "./MatchPickerColumn";
@@ -70,12 +65,7 @@ export const MatchColumnPage: FC<{
         <Title order={2} mb={"lg"}>
           Select header row
         </Title>
-        <Box
-          sx={{
-            width: "100%",
-            overflowX: "auto",
-          }}
-        >
+        <ScrollArea>
           <Title
             order={3}
             mb="md"
@@ -100,7 +90,7 @@ export const MatchColumnPage: FC<{
                 position: "absolute",
                 backgroundImage: `linear-gradient(to bottom, rgba(255,255,255, 0), rgba(255,255,255, 1))`,
                 top: 0,
-                bottom: -1,
+                bottom: -2,
                 left: -1,
                 right: -1,
               }}
@@ -118,6 +108,9 @@ export const MatchColumnPage: FC<{
                     sx={{
                       flexGrow: 1,
                       color: ignoredFields[column.key] ? "gray" : "black",
+                      fontWeight: "bold",
+                      fontSize: 12,
+                      textTransform: "uppercase",
                     }}
                   >
                     {column.title}
@@ -204,7 +197,7 @@ export const MatchColumnPage: FC<{
                 position: "absolute",
                 backgroundImage: `linear-gradient(to bottom, rgba(255,255,255, 0), rgba(255,255,255, 1))`,
                 top: 0,
-                bottom: -1,
+                bottom: -2,
                 left: -1,
                 right: -1,
               }}
@@ -212,6 +205,7 @@ export const MatchColumnPage: FC<{
             <Flex>
               {columns.map((column) => (
                 <MatchPickerColumn
+                  key={column.key}
                   column={{
                     ...column,
                     ignored: ignoredFields[column.key],
@@ -235,9 +229,9 @@ export const MatchColumnPage: FC<{
                 />
               ))}
             </Flex>
-            <Box sx={{ height: 100 }}></Box>
+            <Box sx={{ height: 100 }} />
           </Box>
-        </Box>
+        </ScrollArea>
       </Box>
       <Box
         p={"lg"}

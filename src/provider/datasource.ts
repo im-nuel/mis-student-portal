@@ -23,7 +23,7 @@ export const dataProvider = (): Omit<
 
     if (mode === "server") {
       query.$skip = (current - 1) * pageSize;
-      query.$limit = current * pageSize;
+      query.$limit = pageSize;
     }
 
     const generatedSort = generateSort(sorters);

@@ -1,20 +1,29 @@
-import React, { useMemo } from "react";
+import React from "react";
 import { IResourceComponentsProps } from "@refinedev/core";
 import { useTable } from "@refinedev/react-table";
 import { ColumnDef, flexRender } from "@tanstack/react-table";
-import { ScrollArea, Table, Pagination, Group } from "@mantine/core";
 import {
-  List,
+  ScrollArea,
+  Table,
+  Pagination,
+  Group,
+  Box,
+  Badge,
+} from "@mantine/core";
+import {
   EditButton,
   ShowButton,
   DeleteButton,
   TextField,
+  CreateButton,
 } from "@refinedev/mantine";
 import { StudentSchema } from "../../provider/schema/student.schema";
-import { ImportCSV } from "../../components/ImportCSV";
-import { studentSchema } from "../../provider/schema/student";
-import { FieldProps } from "../../components/ImportCSV/Content";
-import { studentImportSchema } from "./studentImportSchema";
+import { ImportCSV } from "./ImportCSV";
+import { ColumnSorter } from "../../components/table/ColumnSorter";
+import { ColumnFilter } from "../../components/table/ColumnFilter";
+import { getActiveSchoolYear } from "../../components/utils/getActiveSchoolYear";
+import { List } from "../../components/page/List";
+import { ListHeader } from "../../components/page/List/ListHeader";
 
 export const StudentList: React.FC<IResourceComponentsProps> = () => {
   const columns = React.useMemo<ColumnDef<StudentSchema>[]>(
@@ -38,14 +47,30 @@ export const StudentList: React.FC<IResourceComponentsProps> = () => {
         header: "Name",
         cell: function render({ row }) {
           const student = row.original;
-          const value = `${student.last_name}, ${student.first_name} ${student.last_name}`;
+          const value = `${student.last_name}, ${student.first_name} ${student.middle_name}`;
           return <TextField value={value} />;
+        },
+      },
+      {
+        id: "school_year",
+        accessorKey: "school_year",
+        header: "School Year",
+        cell: function render({ getValue }) {
+          return (
+            <Badge
+              color={getValue() === getActiveSchoolYear() ? "green" : "red"}
+            >
+              {getValue<any>()}
+            </Badge>
+          );
         },
       },
       {
         id: "actions",
         accessorKey: "id",
         header: "Actions",
+        enableColumnFilter: false,
+        enableSorting: false,
         cell: function render({ getValue }) {
           return (
             <Group spacing="xs" noWrap>
@@ -72,6 +97,11 @@ export const StudentList: React.FC<IResourceComponentsProps> = () => {
     },
   } = useTable({
     columns,
+    initialState: {
+      pagination: {
+        pageSize: 100,
+      },
+    },
   });
 
   setOptions((prev) => ({
@@ -81,22 +111,16 @@ export const StudentList: React.FC<IResourceComponentsProps> = () => {
     },
   }));
 
-  const fields = useMemo<FieldProps[]>(() => {
-    console.log(studentImportSchema);
-    return studentImportSchema;
-  }, []);
-
   return (
     <List
       headerButtons={
-        <ImportCSV
-          fields={fields}
-          onSave={function (data: { [key: string]: any }): void {
-            throw new Error("Function not implemented.");
-          }}
-        />
+        <>
+          <ImportCSV />
+          <CreateButton />
+        </>
       }
     >
+      <ListHeader />
       <ScrollArea>
         <Table highlightOnHover>
           <thead>
@@ -105,11 +129,19 @@ export const StudentList: React.FC<IResourceComponentsProps> = () => {
                 {headerGroup.headers.map((header) => {
                   return (
                     <th key={header.id}>
-                      {!header.isPlaceholder &&
-                        flexRender(
-                          header.column.columnDef.header,
-                          header.getContext()
-                        )}
+                      {!header.isPlaceholder && (
+                        <Group spacing="xs" noWrap>
+                          <Box>
+                            {flexRender(
+                              header.column.columnDef.header,
+                              header.getContext()
+                            )}
+                          </Box>
+                          <Group spacing="xs" noWrap>
+                            <ColumnSorter column={header.column} />
+                          </Group>
+                        </Group>
+                      )}
                     </th>
                   );
                 })}

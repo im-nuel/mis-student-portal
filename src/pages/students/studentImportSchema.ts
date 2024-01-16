@@ -1,9 +1,6 @@
-import { property } from "lodash";
-import { studentSchema } from "../../provider/schema/student";
-import { FieldProps } from "../../components/ImportCSV/Content";
-import moment from "moment";
+import { Fields } from "react-spreadsheet-import/types/types";
 
-export const studentImportSchema: FieldProps[] = [
+export const studentImportSchema: Fields<string>[] = [
   {
     key: "id",
     label: "id",
@@ -11,6 +8,13 @@ export const studentImportSchema: FieldProps[] = [
     fieldType: {
       type: "input",
     },
+    validations: [
+      {
+        rule: "unique",
+        errorMessage: "id must be unique",
+        level: "info",
+      },
+    ],
   },
   {
     key: "student_id",
@@ -19,6 +23,16 @@ export const studentImportSchema: FieldProps[] = [
     fieldType: {
       type: "input",
     },
+    validations: [
+      {
+        rule: "required",
+        errorMessage: "student_id is required",
+      },
+      {
+        rule: "unique",
+        errorMessage: "student_id must be unique",
+      },
+    ],
   },
   {
     key: "nisn",
@@ -27,6 +41,17 @@ export const studentImportSchema: FieldProps[] = [
     fieldType: {
       type: "input",
     },
+    validations: [
+      {
+        rule: "required",
+        errorMessage: "nisn is required",
+      },
+      {
+        rule: "unique",
+        errorMessage: "nisn must be unique",
+        level: "info",
+      },
+    ],
   },
   {
     key: "last_name",
@@ -67,6 +92,7 @@ export const studentImportSchema: FieldProps[] = [
     fieldType: {
       type: "input",
     },
+    alternateMatches: ["rank", "rank in fam"],
   },
   {
     key: "citizenship",
@@ -91,6 +117,7 @@ export const studentImportSchema: FieldProps[] = [
     fieldType: {
       type: "input",
     },
+    alternateMatches: ["pob"],
   },
   {
     key: "date_of_birth",
@@ -99,6 +126,7 @@ export const studentImportSchema: FieldProps[] = [
     fieldType: {
       type: "input",
     },
+    alternateMatches: ["dob"],
   },
   {
     key: "gender",
@@ -133,6 +161,7 @@ export const studentImportSchema: FieldProps[] = [
     fieldType: {
       type: "input",
     },
+    alternateMatches: ["phone"],
   },
   {
     key: "email",
@@ -149,6 +178,7 @@ export const studentImportSchema: FieldProps[] = [
     fieldType: {
       type: "input",
     },
+    alternateMatches: ["school", "prev school"],
   },
   {
     key: "religion",
@@ -162,24 +192,28 @@ export const studentImportSchema: FieldProps[] = [
           value: "islam",
         },
         {
-          label: "Protestan",
-          value: "protestan",
+          label: "Advent",
+          value: "christian_advent",
+        },
+        {
+          label: "Protestant",
+          value: "christian_protestant",
         },
         {
           label: "Catholic",
-          value: "catholic",
+          value: "christian_catholic",
         },
         {
           label: "Hindu",
           value: "hindu",
         },
         {
-          label: "Budha",
-          value: "budha",
+          label: "Buddha",
+          value: "buddha",
         },
         {
-          label: "Konghucu",
-          value: "konghucu",
+          label: "Confucian",
+          value: "confucian",
         },
       ],
     },
@@ -211,7 +245,11 @@ export const studentImportSchema: FieldProps[] = [
     label: "semester",
     example: "1",
     fieldType: {
-      type: "input",
+      type: "select",
+      options: [
+        { label: "1st", value: "first" },
+        { label: "2nd", value: "second" },
+      ],
     },
   },
   {
@@ -238,6 +276,7 @@ export const studentImportSchema: FieldProps[] = [
     fieldType: {
       type: "input",
     },
+    alternateMatches: ["reg number", "registration", "registration no"],
   },
   {
     key: "academic_status",
@@ -262,6 +301,7 @@ export const studentImportSchema: FieldProps[] = [
     fieldType: {
       type: "input",
     },
+    alternateMatches: ["family card"],
   },
   {
     key: "section",
@@ -271,19 +311,19 @@ export const studentImportSchema: FieldProps[] = [
       type: "select",
       options: [
         {
-          label: "ECP",
+          label: "Early Childhood Program",
           value: "ECP",
         },
         {
-          label: "ES",
+          label: "Elementary School",
           value: "ES",
         },
         {
-          label: "MS",
+          label: "Middle School",
           value: "MS",
         },
         {
-          label: "HS",
+          label: "High School",
           value: "HS",
         },
       ],
@@ -310,51 +350,51 @@ export const studentImportSchema: FieldProps[] = [
         },
         {
           label: "Grade 1",
-          value: "1",
+          value: "G1",
         },
         {
           label: "Grade 2",
-          value: "2",
+          value: "G2",
         },
         {
           label: "Grade 3",
-          value: "3",
+          value: "G3",
         },
         {
           label: "Grade 4",
-          value: "4",
+          value: "G4",
         },
         {
           label: "Grade 5",
-          value: "5",
+          value: "G5",
         },
         {
           label: "Grade 6",
-          value: "6",
+          value: "G6",
         },
         {
           label: "Grade 7",
-          value: "7",
+          value: "G7",
         },
         {
           label: "Grade 8",
-          value: "8",
+          value: "G8",
         },
         {
           label: "Grade 9",
-          value: "9",
+          value: "G9",
         },
         {
           label: "Grade 10",
-          value: "10",
+          value: "G10",
         },
         {
           label: "Grade 11",
-          value: "11",
+          value: "G11",
         },
         {
           label: "Grade 12",
-          value: "12",
+          value: "G12",
         },
       ],
     },
@@ -374,13 +414,18 @@ export const studentImportSchema: FieldProps[] = [
     fieldType: {
       type: "input",
     },
+    alternateMatches: ["other program", "other_prog"],
   },
   {
     key: "transportation",
     label: "transportation",
     example: "School Bus",
     fieldType: {
-      type: "input",
+      type: "select",
+      options: [
+        { label: "School Bus", value: "school_bus" },
+        { label: "Own Vehicle", value: "own_vehicle" },
+      ],
     },
   },
   {
@@ -390,6 +435,7 @@ export const studentImportSchema: FieldProps[] = [
     fieldType: {
       type: "checkbox",
     },
+    alternateMatches: ["trans policy"],
   },
   {
     key: "pick_up_point",
@@ -398,14 +444,30 @@ export const studentImportSchema: FieldProps[] = [
     fieldType: {
       type: "input",
     },
+    alternateMatches: ["point", "pup_point"],
   },
   {
     key: "residence_hall",
     label: "residence_hall",
     example: "Boys Dormitory",
     fieldType: {
-      type: "input",
+      type: "select",
+      options: [
+        {
+          label: "Boys' Dormitory",
+          value: "boys_dormitory",
+        },
+        {
+          label: "Girls' Dormitory",
+          value: "girls_dormitory",
+        },
+        {
+          label: "Non-Residence Hall",
+          value: "non_residence_hall",
+        },
+      ],
     },
+    alternateMatches: ["rec_hall"],
   },
   {
     key: "residence_hall_policy",
@@ -414,14 +476,26 @@ export const studentImportSchema: FieldProps[] = [
     fieldType: {
       type: "checkbox",
     },
+    alternateMatches: ["rhall_policy"],
   },
   {
     key: "residence_hall_payment",
     label: "residence_hall_payment",
     example: "Installment",
     fieldType: {
-      type: "input",
+      type: "select",
+      options: [
+        {
+          label: "Full Payment",
+          value: "full_payment",
+        },
+        {
+          label: "Installment",
+          value: "installment",
+        },
+      ],
     },
+    alternateMatches: ["rec_hall_pay"],
   },
   {
     key: "father_name",
@@ -438,6 +512,7 @@ export const studentImportSchema: FieldProps[] = [
     fieldType: {
       type: "input",
     },
+    alternateMatches: ["father_occup"],
   },
   {
     key: "father_company",
@@ -446,6 +521,7 @@ export const studentImportSchema: FieldProps[] = [
     fieldType: {
       type: "input",
     },
+    alternateMatches: ["father_comp"],
   },
   {
     key: "father_address",
@@ -454,6 +530,7 @@ export const studentImportSchema: FieldProps[] = [
     fieldType: {
       type: "input",
     },
+    alternateMatches: ["father_addr"],
   },
   {
     key: "father_phone_number",
@@ -462,6 +539,7 @@ export const studentImportSchema: FieldProps[] = [
     fieldType: {
       type: "input",
     },
+    alternateMatches: ["father_phone"],
   },
   {
     key: "father_email",
@@ -470,6 +548,7 @@ export const studentImportSchema: FieldProps[] = [
     fieldType: {
       type: "input",
     },
+    alternateMatches: ["father_addr"],
   },
   {
     key: "mother_name",
@@ -478,6 +557,7 @@ export const studentImportSchema: FieldProps[] = [
     fieldType: {
       type: "input",
     },
+    alternateMatches: ["mother_name"],
   },
   {
     key: "mother_occupation",
@@ -486,6 +566,7 @@ export const studentImportSchema: FieldProps[] = [
     fieldType: {
       type: "input",
     },
+    alternateMatches: ["mother_occup"],
   },
   {
     key: "mother_company",
@@ -494,6 +575,7 @@ export const studentImportSchema: FieldProps[] = [
     fieldType: {
       type: "input",
     },
+    alternateMatches: ["mother_comp"],
   },
   {
     key: "mother_address",
@@ -502,6 +584,7 @@ export const studentImportSchema: FieldProps[] = [
     fieldType: {
       type: "input",
     },
+    alternateMatches: ["mother_addr"],
   },
   {
     key: "mother_phone_number",
@@ -510,6 +593,7 @@ export const studentImportSchema: FieldProps[] = [
     fieldType: {
       type: "input",
     },
+    alternateMatches: ["mother_phone"],
   },
   {
     key: "mother_email",
@@ -526,6 +610,7 @@ export const studentImportSchema: FieldProps[] = [
     fieldType: {
       type: "input",
     },
+    alternateMatches: ["guardian_name"],
   },
   {
     key: "guardian_occupation",
@@ -534,6 +619,7 @@ export const studentImportSchema: FieldProps[] = [
     fieldType: {
       type: "input",
     },
+    alternateMatches: ["guardian_occup"],
   },
   {
     key: "guardian_company",
@@ -542,6 +628,7 @@ export const studentImportSchema: FieldProps[] = [
     fieldType: {
       type: "input",
     },
+    alternateMatches: ["guardian_comp"],
   },
   {
     key: "guardian_address",
@@ -550,6 +637,7 @@ export const studentImportSchema: FieldProps[] = [
     fieldType: {
       type: "input",
     },
+    alternateMatches: ["guardian_addr"],
   },
   {
     key: "guardian_phone_number",
@@ -558,6 +646,7 @@ export const studentImportSchema: FieldProps[] = [
     fieldType: {
       type: "input",
     },
+    alternateMatches: ["guardian_phone"],
   },
   {
     key: "guardian_email",
@@ -566,6 +655,7 @@ export const studentImportSchema: FieldProps[] = [
     fieldType: {
       type: "input",
     },
+    alternateMatches: ["guardian_email"],
   },
   {
     key: "guardian_relation",
@@ -574,13 +664,24 @@ export const studentImportSchema: FieldProps[] = [
     fieldType: {
       type: "input",
     },
+    alternateMatches: ["rel_student"],
   },
   {
     key: "tuition_fee",
     label: "tuition_fee",
-    example: "number",
+    example: "Installment",
     fieldType: {
-      type: "input",
+      type: "select",
+      options: [
+        {
+          label: "Full Payment",
+          value: "full_payment",
+        },
+        {
+          label: "Installment",
+          value: "installment",
+        },
+      ],
     },
   },
   {
@@ -588,8 +689,9 @@ export const studentImportSchema: FieldProps[] = [
     label: "finance_policy",
     example: "boolean",
     fieldType: {
-      type: "input",
+      type: "checkbox",
     },
+    alternateMatches: ["fin_policy_con"],
   },
   {
     key: "register_date",
@@ -598,6 +700,7 @@ export const studentImportSchema: FieldProps[] = [
     fieldType: {
       type: "input",
     },
+    alternateMatches: ["reg_date"],
   },
   {
     key: "document_approval",
@@ -606,6 +709,7 @@ export const studentImportSchema: FieldProps[] = [
     fieldType: {
       type: "checkbox",
     },
+    alternateMatches: ["apv_doc"],
   },
   {
     key: "test_approval",
@@ -614,6 +718,7 @@ export const studentImportSchema: FieldProps[] = [
     fieldType: {
       type: "checkbox",
     },
+    alternateMatches: ["apv_test"],
   },
   {
     key: "account_status",
@@ -642,3 +747,11 @@ export const studentImportSchema: FieldProps[] = [
     },
   },
 ];
+
+export const STUDENT_IMPORT_SCHEMA: { [key: string]: Fields<any> } =
+  studentImportSchema.reduce((prev, curr) => {
+    return {
+      ...prev,
+      [curr.key]: curr,
+    };
+  }, {});

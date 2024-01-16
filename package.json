@@ -8,10 +8,11 @@
     "@feathersjs/authentication-client": "^5.0.14",
     "@feathersjs/rest-client": "^5.0.14",
     "@feathersjs/typebox": "^5.0.14",
-    "@mantine/core": "^5.10.4",
-    "@mantine/form": "^5.10.4",
-    "@mantine/hooks": "^5.10.4",
-    "@mantine/notifications": "^5.10.4",
+    "@mantine/core": "^5.10.5",
+    "@mantine/dates": "^5.10.5",
+    "@mantine/form": "^5.10.5",
+    "@mantine/hooks": "^5.10.5",
+    "@mantine/notifications": "^5.10.5",
     "@refinedev/cli": "^2.16.21",
     "@refinedev/core": "^4.46.1",
     "@refinedev/devtools": "^1.1.29",
@@ -21,6 +22,7 @@
     "@refinedev/react-router-v6": "^4.5.5",
     "@refinedev/react-table": "^5.6.5",
     "@refinedev/simple-rest": "^5.0.1",
+    "@refinedev/ui-types": "^1.22.4",
     "@tabler/icons-react": "^2.46.0",
     "@tanstack/react-table": "^8.11.6",
     "@tanstack/react-virtual": "^3.0.1",
@@ -30,7 +32,8 @@
     "react": "^18.0.0",
     "react-data-grid": "^7.0.0-beta.41",
     "react-dom": "^18.0.0",
-    "react-router-dom": "^6.8.1"
+    "react-router-dom": "^6.8.1",
+    "react-spreadsheet-import": "^4.6.1"
   },
   "devDependencies": {
     "@types/lodash": "^4.14.202",

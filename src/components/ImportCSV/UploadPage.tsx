@@ -39,7 +39,11 @@ export const UploadPage: FC<{
     await Papa.parse<string[]>(files[0] as any, {
       complete: function (results) {
         setLoading(false);
-        onNext(results.data);
+        onNext(
+          results.data.map((row) =>
+            row.map((col) => col.replace(/  |\r\n|\n|\r/gm, ""))
+          )
+        );
       },
     });
   }, []);
