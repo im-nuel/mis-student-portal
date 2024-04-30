@@ -1,3 +1,5 @@
+import React from "react";
+import moment from "moment";
 import { IResourceComponentsProps } from "@refinedev/core";
 import { Create, Edit, useForm } from "@refinedev/mantine";
 import {
@@ -12,12 +14,61 @@ import {
   Title,
   Card,
   Textarea,
+  Image,
+  AspectRatio,
+  UnstyledButton,
+  Switch,
+  useMantineTheme,
+  Input,
 } from "@mantine/core";
 import { STUDENT_IMPORT_SCHEMA } from "./studentImportSchema";
 import { DatePicker } from "@mantine/dates";
-import moment from "moment";
+import { PicturePicker } from "../../components/page/Edit/PicturePicker";
+import { imagekit } from "../../provider/imagekit";
+import { ImageProps } from "../../components/image_picker/ImagePickerProvider";
+import { generateId } from "../../components/utils/generateId";
+import { blobUrlToBase64 } from "../../components/utils/blobUrlToBase64";
+import { IconCheck, IconX } from "@tabler/icons-react";
+import * as Yup from "yup";
+import { yupResolver } from "@mantine/form";
+import _reverse from "lodash/reverse";
+
+const SCHEMA = Yup.object().shape({
+  academic_status: Yup.string().required(),
+  account_status: Yup.string().required(),
+  address: Yup.string().required(),
+  citizenship: Yup.string(),
+  date_of_birth: Yup.string().required(),
+  email: Yup.string().required(),
+  family_card_number: Yup.string().required(),
+  finance_policy: Yup.boolean().required(),
+  first_name: Yup.string().required(),
+  gender: Yup.string().required(),
+  grade: Yup.string().required(),
+  last_name: Yup.string(),
+  middle_name: Yup.string(),
+  nickname: Yup.string(),
+  phone_number: Yup.string().required(),
+  place_of_birth: Yup.string().required(),
+  previous_school: Yup.string().required(),
+  program: Yup.string().required(),
+  rank_in_family: Yup.string(),
+  registration_number: Yup.string().required(),
+  religion: Yup.string().required(),
+  residence_hall_payment: Yup.string().required(),
+  residence_hall_policy: Yup.boolean().required(),
+  residence_hall: Yup.string().required(),
+  school_year: Yup.string().required(),
+  section: Yup.string().required(),
+  semester: Yup.string().required(),
+  status: Yup.string().required(),
+  transportation_policy: Yup.boolean().required(),
+  transportation: Yup.string().required(),
+  tuition_fee: Yup.string().required(),
+});
 
 export const StudentEdit: React.FC<IResourceComponentsProps> = () => {
+  const theme = useMantineTheme();
   const {
     getInputProps,
     saveButtonProps,
@@ -26,15 +77,14 @@ export const StudentEdit: React.FC<IResourceComponentsProps> = () => {
     values,
   } = useForm({
     initialValues: {
+      id: undefined,
       academic_status: "",
       account_status: "",
       address: "",
       age: "",
       asother: "",
       citizenship: "",
-      created_at: "",
       date_of_birth: new Date(),
-      document_approval: "",
       email: "",
       family_card_number: "",
       father_address: "",
@@ -43,7 +93,7 @@ export const StudentEdit: React.FC<IResourceComponentsProps> = () => {
       father_name: "",
       father_occupation: "",
       father_phone_number: "",
-      finance_policy: "",
+      finance_policy: undefined,
       first_name: "",
       gender: "male",
       grade: "",
@@ -72,29 +122,62 @@ export const StudentEdit: React.FC<IResourceComponentsProps> = () => {
       registration_number: "",
       religion: "",
       residence_hall_payment: "",
-      residence_hall_policy: "",
+      residence_hall_policy: undefined,
       residence_hall: "",
       school_year: "",
       section: "",
       semester: "",
       status: "new",
-      student_id: "",
-      test_approval: "",
-      transportation_policy: "",
+      transportation_policy: undefined,
       transportation: "",
       tuition_fee: "",
-      updated_at: "",
+
+      profile_image_url: "",
     },
+    validate: yupResolver(SCHEMA),
   });
+
+  const imageUploadHandler = async (image: ImageProps) => {
+    const filename = `${generateId()}.jpg`;
+
+    const res = await imagekit.upload({
+      file: (await blobUrlToBase64(image.croppedImage)) as any,
+      fileName: filename,
+    });
+    setFieldValue("profile_image_url", res.url);
+  };
+
+  const schoolYears = React.useMemo(() => {
+    const arr = [...STUDENT_IMPORT_SCHEMA["school_year"].fieldType.options];
+    return _reverse(arr);
+  }, []);
 
   return (
     <Edit isLoading={formLoading} saveButtonProps={saveButtonProps}>
       <Group>
-        <Radio.Group label="Student" {...getInputProps("status")}>
-          <Radio label="New" value="new" />
-          <Radio label="Old" value="old" />
-          <Radio label="Transfer" value="transfer" />
-        </Radio.Group>
+        <AspectRatio ratio={4 / 6} sx={{ maxWidth: 100, width: "100%" }}>
+          <PicturePicker
+            previewImage={values.profile_image_url}
+            onSubmit={imageUploadHandler}
+          />
+        </AspectRatio>
+        <div>
+          <TextInput
+            label="Student ID"
+            readOnly
+            {...getInputProps("id")}
+            variant="unstyled"
+          />
+          <Radio.Group
+            mt="sm"
+            label="Student Status"
+            {...getInputProps("status")}
+          >
+            <Radio label="New" value="new" />
+            <Radio label="Old" value="old" />
+            <Radio label="Transfer" value="transfer" />
+          </Radio.Group>
+        </div>
       </Group>
       <Flex mx={"-xs"} mb="lg">
         <Select
@@ -111,15 +194,8 @@ export const StudentEdit: React.FC<IResourceComponentsProps> = () => {
           size="xs"
           withinPortal
           label="School Year"
-          data={STUDENT_IMPORT_SCHEMA["school_year"].fieldType.options}
+          data={schoolYears}
           {...getInputProps("school_year")}
-        />
-        <TextInput
-          mt="sm"
-          mx="xs"
-          size="xs"
-          label="Student ID"
-          {...getInputProps("student_id")}
         />
         <Box sx={{ flex: 1 }} />
         <TextInput
@@ -279,14 +355,14 @@ export const StudentEdit: React.FC<IResourceComponentsProps> = () => {
         </Flex>
         <Flex mx="-xs">
           <Group grow w={"75%"} spacing={0}>
-            <Select
+            <TextInput
+              label="Student ID"
               mt="sm"
               mx="xs"
               size="xs"
-              withinPortal
-              label="Status"
-              data={STUDENT_IMPORT_SCHEMA["status"].fieldType.options}
+              readOnly
               {...getInputProps("status")}
+              variant="unstyled"
             />
             <TextInput
               mt="sm"
@@ -403,15 +479,32 @@ export const StudentEdit: React.FC<IResourceComponentsProps> = () => {
               )}
             </Box>
           </Group>
-          <Radio.Group
-            mt="sm"
-            label="Transportation Policy"
-            size="xs"
-            {...getInputProps("transportation_policy")}
-          >
-            <Radio label="Signed" value="signed" />
-            <Radio label="Not Signed" value="not_signed" />
-          </Radio.Group>
+          <Box mt="sm">
+            <Input.Label size="xs" mb="xs">
+              Transportation Policy
+            </Input.Label>
+            <Switch
+              label={"Signed"}
+              size="sm"
+              thumbIcon={
+                values["transportation_policy"] ? (
+                  <IconCheck
+                    size={12}
+                    color={theme.colors.teal[theme.fn.primaryShade()]}
+                    stroke={3}
+                  />
+                ) : (
+                  <IconX
+                    size={12}
+                    color={theme.colors.red[theme.fn.primaryShade()]}
+                    stroke={3}
+                  />
+                )
+              }
+              {...getInputProps("transportation_policy")}
+              checked={values["transportation_policy"]}
+            />
+          </Box>
         </Flex>
         <Flex mx="-xs">
           <Group grow w={"75%"} spacing={0}>
@@ -428,15 +521,33 @@ export const StudentEdit: React.FC<IResourceComponentsProps> = () => {
             </Box>
             <Box w="50%" />
           </Group>
-          <Radio.Group
-            mt="sm"
-            size="xs"
-            label="Residence Hall Policy"
-            {...getInputProps("residence_hall_policy")}
-          >
-            <Radio label="Signed" value="true" />
-            <Radio label="Not Signed" value="false" />
-          </Radio.Group>
+          <Box mt="sm">
+            <Input.Label size="xs" mb="xs">
+              Residence Hall Policy
+            </Input.Label>
+            <Switch
+              label={"Signed"}
+              size="sm"
+              thumbIcon={
+                values["residence_hall_policy"] ? (
+                  <IconCheck
+                    size={12}
+                    color={theme.colors.teal[theme.fn.primaryShade()]}
+                    stroke={3}
+                  />
+                ) : (
+                  <IconX
+                    size={12}
+                    color={theme.colors.red[theme.fn.primaryShade()]}
+                    stroke={3}
+                  />
+                )
+              }
+              {...getInputProps("residence_hall_policy")}
+              // checked={values["residence_hall_policy"]}
+              checked={values["residence_hall_policy"]}
+            />
+          </Box>
         </Flex>
       </Card>
 
@@ -603,15 +714,32 @@ export const StudentEdit: React.FC<IResourceComponentsProps> = () => {
             />
           </Box>
           <Box w="25%">
-            <Radio.Group
-              mt="sm"
-              size="xs"
-              label="Finance Policy"
-              {...getInputProps("finance_policy")}
-            >
-              <Radio label="Signed" value="true" />
-              <Radio label="Not Signed" value="false" />
-            </Radio.Group>
+            <Box mt="sm">
+              <Input.Label size="xs" mb="xs">
+                Finance Policy
+              </Input.Label>
+              <Switch
+                label={"Signed"}
+                size="sm"
+                thumbIcon={
+                  values["finance_policy"] ? (
+                    <IconCheck
+                      size={12}
+                      color={theme.colors.teal[theme.fn.primaryShade()]}
+                      stroke={3}
+                    />
+                  ) : (
+                    <IconX
+                      size={12}
+                      color={theme.colors.red[theme.fn.primaryShade()]}
+                      stroke={3}
+                    />
+                  )
+                }
+                {...getInputProps("finance_policy")}
+                checked={values["finance_policy"]}
+              />
+            </Box>
           </Box>
         </Group>
         <Group grow>

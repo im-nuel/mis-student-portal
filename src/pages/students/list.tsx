@@ -9,6 +9,7 @@ import {
   Group,
   Box,
   Badge,
+  LoadingOverlay,
 } from "@mantine/core";
 import {
   EditButton,
@@ -24,6 +25,9 @@ import { ColumnFilter } from "../../components/table/ColumnFilter";
 import { getActiveSchoolYear } from "../../components/utils/getActiveSchoolYear";
 import { List } from "../../components/page/List";
 import { ListHeader } from "../../components/page/List/ListHeader";
+import { SearchField } from "../../components/page/List/SearchField";
+import _capitalize from "lodash/capitalize";
+import { capitalizeString } from "../../components/utils/capitalized";
 
 export const StudentList: React.FC<IResourceComponentsProps> = () => {
   const columns = React.useMemo<ColumnDef<StudentSchema>[]>(
@@ -31,11 +35,6 @@ export const StudentList: React.FC<IResourceComponentsProps> = () => {
       {
         id: "id",
         accessorKey: "id",
-        header: "Id",
-      },
-      {
-        id: "student_id",
-        accessorKey: "student_id",
         header: "Student ID",
         cell: function render({ getValue }) {
           return <TextField value={getValue<any>()} />;
@@ -45,10 +44,51 @@ export const StudentList: React.FC<IResourceComponentsProps> = () => {
         id: "student_name",
         accessorKey: "first_name",
         header: "Name",
+        enableSorting: false,
         cell: function render({ row }) {
           const student = row.original;
-          const value = `${student.last_name}, ${student.first_name} ${student.middle_name}`;
+          const value = capitalizeString(
+            `${!!student.last_name ? student.last_name + ", " : ""}${
+              student.first_name
+            }${student.middle_name ? student.middle_name : ""}`
+          );
           return <TextField value={value} />;
+        },
+      },
+      {
+        id: "grade",
+        accessorKey: "grade",
+        header: "Grade",
+      },
+      {
+        id: "section",
+        accessorKey: "section",
+        header: "Section",
+        cell: function render({ getValue }) {
+          const value: StudentSchema["section"] = getValue<any>();
+          const display = {
+            label: "",
+            color: "",
+          };
+          switch (value) {
+            case "ECP":
+              display.label = "Early Childhood Program";
+              display.color = "gray";
+              break;
+            case "ES":
+              display.label = "Elementary School";
+              display.color = "red";
+              break;
+            case "MS":
+              display.label = "Middle School";
+              display.color = "blue";
+              break;
+            case "HS":
+              display.label = "High School";
+              display.color = "yellow";
+              break;
+          }
+          return <Badge color={display.color}>{value}</Badge>;
         },
       },
       {
@@ -93,13 +133,19 @@ export const StudentList: React.FC<IResourceComponentsProps> = () => {
       setCurrent,
       pageCount,
       current,
-      tableQueryResult: { data: tableData },
+      tableQueryResult: { isLoading, isFetching },
     },
   } = useTable({
     columns,
     initialState: {
+      sorting: [
+        {
+          id: "id",
+          desc: true,
+        },
+      ],
       pagination: {
-        pageSize: 100,
+        pageSize: 20,
       },
     },
   });
@@ -113,16 +159,38 @@ export const StudentList: React.FC<IResourceComponentsProps> = () => {
 
   return (
     <List
+      headerButtonProps={{
+        w: "100%",
+        position: "apart",
+      }}
       headerButtons={
         <>
-          <ImportCSV />
-          <CreateButton />
+          <Box w="100%" maw={"400px"}>
+            <SearchField
+              placeholder="Search Student"
+              resource="students"
+              filters={
+                [
+                  // "student_id",
+                  // "last_name",
+                  // "first_name",
+                  // "middle_name",
+                  // "school_year",
+                ]
+              }
+            />
+          </Box>
+          <Group spacing="sm">
+            <ImportCSV />
+            <CreateButton />
+          </Group>
         </>
       }
     >
       <ListHeader />
-      <ScrollArea>
-        <Table highlightOnHover>
+      <ScrollArea mt="lg" pos="relative">
+        <LoadingOverlay visible={isFetching} />
+        <Table highlightOnHover withBorder sx={{ borderRadius: 8 }}>
           <thead>
             {getHeaderGroups().map((headerGroup) => (
               <tr key={headerGroup.id}>

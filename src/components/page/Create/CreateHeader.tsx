@@ -11,7 +11,6 @@ import {
 import { Breadcrumb } from "@refinedev/mantine";
 import { RefinePageHeaderClassNames } from "@refinedev/ui-types";
 import { IconArrowLeft } from "@tabler/icons-react";
-import { title } from "process";
 import { useCreatePageContext } from "./CreatePageProvider";
 
 export const CreateHeader = () => {

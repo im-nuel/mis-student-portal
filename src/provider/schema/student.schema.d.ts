@@ -1,6 +1,5 @@
 export interface StudentSchema {
   id: string;
-  student_id: string;
   nisn: string;
 
   last_name: string;
@@ -56,11 +55,13 @@ export interface StudentSchema {
 
   father_name: string;
   father_phone_number: string;
+  father_company: string;
   father_occupation: string;
   father_address: string;
   father_email: string;
 
   mother_name: string;
+  mother_company: string;
   mother_phone_number: string;
   mother_occupation: string;
   mother_address: string;
@@ -68,7 +69,7 @@ export interface StudentSchema {
 
   guardian_name: string;
   guardian_phone_number: string;
-  guardian_occupation: string;
+  guardian_relation: string;
   guardian_address: string;
   guardian_email: string;
 

@@ -10,29 +10,16 @@ export const studentImportSchema: Fields<string>[] = [
     },
     validations: [
       {
+        rule: "required",
+        errorMessage: "id is required",
+      },
+      {
         rule: "unique",
         errorMessage: "id must be unique",
         level: "info",
       },
     ],
-  },
-  {
-    key: "student_id",
-    label: "student_id",
-    example: "6578",
-    fieldType: {
-      type: "input",
-    },
-    validations: [
-      {
-        rule: "required",
-        errorMessage: "student_id is required",
-      },
-      {
-        rule: "unique",
-        errorMessage: "student_id must be unique",
-      },
-    ],
+    alternateMatches: ["student_id"],
   },
   {
     key: "nisn",
@@ -68,6 +55,12 @@ export const studentImportSchema: Fields<string>[] = [
     fieldType: {
       type: "input",
     },
+    validations: [
+      {
+        rule: "required",
+        errorMessage: "first_name is required",
+      },
+    ],
   },
   {
     key: "middle_name",

@@ -23,7 +23,7 @@ export const ColumnSorter: React.FC<{
       color={sorted ? "primary" : "gray"}
     >
       {!sorted && <IconSelector size={18} />}
-      {sorted && <IconChevronDown size={18} />}
+      {sorted && <IconChevronUp size={18} />}
       {/* {sorted === "desc" && <IconChevronUp size={18} />} */}
     </ActionIcon>
   );

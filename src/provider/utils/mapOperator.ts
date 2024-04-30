@@ -2,12 +2,15 @@ import { CrudOperators } from "@refinedev/core";
 
 export const mapOperator = (operator: CrudOperators): string => {
   switch (operator) {
+    case "nin":
     case "ne":
+    case "gt":
     case "gte":
+    case "lt":
     case "lte":
-      return `_${operator}`;
+      return `$${operator}`;
     case "contains":
-      return "_like";
+      return "$like";
     case "eq":
     default:
       return "";

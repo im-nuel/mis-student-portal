@@ -1,30 +1,6 @@
 import React from "react";
-import {
-  Box,
-  Card,
-  Group,
-  ActionIcon,
-  Stack,
-  Title,
-  LoadingOverlay,
-} from "@mantine/core";
-import {
-  useBack,
-  useNavigation,
-  useRefineContext,
-  useResource,
-  useUserFriendlyName,
-  useRouterType,
-  useTranslate,
-} from "@refinedev/core";
-import { IconArrowLeft } from "@tabler/icons";
-import { RefinePageHeaderClassNames } from "@refinedev/ui-types";
-import {
-  Breadcrumb,
-  CreateProps,
-  SaveButton,
-  SaveButtonProps,
-} from "@refinedev/mantine";
+import { LoadingOverlay } from "@mantine/core";
+import { CreateProps, SaveButtonProps } from "@refinedev/mantine";
 import { CreatePageProvider } from "./Create/CreatePageProvider";
 import { CreateHeader } from "./Create/CreateHeader";
 import { CreateFooter } from "./Create/CreateFooter";

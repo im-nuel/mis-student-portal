@@ -25,14 +25,22 @@ export const ImportCSV = () => {
       <Button leftIcon={<IconUpload size={16} />} onClick={open}>
         Import CSV
       </Button>
-      <ReactSpreadsheetImport
-        autoMapSelectValues
-        isNavigationEnabled
-        isOpen={opened}
-        onClose={close}
-        onSubmit={importCSVHandler}
-        fields={studentImportSchema}
-      />
+      {opened && (
+        <ReactSpreadsheetImport
+          autoMapSelectValues
+          isOpen={true}
+          onClose={close}
+          onSubmit={importCSVHandler}
+          fields={studentImportSchema}
+          uploadStepHook={async (data) => {
+            return Promise.resolve(
+              (data as string[][]).map((item) => {
+                return item.map((col) => col.replace(/  |\r\n|\n|\r/gm, ""));
+              })
+            );
+          }}
+        />
+      )}
     </>
   );
 };

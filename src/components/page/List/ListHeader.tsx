@@ -99,7 +99,7 @@ export const ListHeader: React.FC<ListProps> = () => {
             </Title>
           )}
         </Stack>
-        <Group spacing="xs" {...headerButtonProps}>
+        <Group spacing="xs" {...headerButtonProps} >
           {headerButtons}
         </Group>
       </Group>

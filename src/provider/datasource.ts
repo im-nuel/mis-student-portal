@@ -1,25 +1,28 @@
 import { DataProvider } from "@refinedev/core";
 import { generateSort } from "./utils/generateSort";
 import { feathers, host } from "./client";
+import { generateFilter } from "./utils/generateFilter";
 
 export const dataProvider = (): Omit<
   Required<DataProvider>,
   "createMany" | "updateMany" | "deleteMany"
 > => ({
-  getList: async ({ resource, pagination, sorters, meta }) => {
+  getList: async ({ resource, pagination, sorters, filters, meta }) => {
     const service = feathers.service(resource);
 
     const { current = 1, pageSize = 10, mode = "server" } = pagination ?? {};
 
     const { headers: headersFromMeta } = meta ?? {};
 
-    // const queryFilters = generateFilter(filters);
+    const queryFilters = generateFilter(filters);
 
     const query: {
       $skip?: number;
       $limit?: number;
       $sort?: { [key: string]: number };
-    } = {};
+    } = {
+      ...queryFilters,
+    };
 
     if (mode === "server") {
       query.$skip = (current - 1) * pageSize;

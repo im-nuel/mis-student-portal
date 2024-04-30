@@ -18,6 +18,45 @@ import { STUDENT_IMPORT_SCHEMA } from "./studentImportSchema";
 import { DatePicker } from "@mantine/dates";
 import moment from "moment";
 import { Create } from "../../components/page/Create";
+import { StudentSchema } from "../../provider/schema/student.schema";
+import _reverse from "lodash/reverse";
+import React from "react";
+import * as Yup from "yup";
+import { yupResolver } from "@mantine/form";
+
+const SCHEMA = Yup.object().shape({
+  academic_status: Yup.string().required(),
+  account_status: Yup.string().required(),
+  address: Yup.string().required(),
+  citizenship: Yup.string(),
+  date_of_birth: Yup.string().required(),
+  email: Yup.string().required(),
+  family_card_number: Yup.string().required(),
+  finance_policy: Yup.boolean().required(),
+  first_name: Yup.string().required(),
+  gender: Yup.string().required(),
+  grade: Yup.string().required(),
+  last_name: Yup.string(),
+  middle_name: Yup.string(),
+  nickname: Yup.string(),
+  phone_number: Yup.string().required(),
+  place_of_birth: Yup.string().required(),
+  previous_school: Yup.string().required(),
+  program: Yup.string().required(),
+  rank_in_family: Yup.string(),
+  registration_number: Yup.string().required(),
+  religion: Yup.string().required(),
+  residence_hall_payment: Yup.string().required(),
+  residence_hall_policy: Yup.boolean().required(),
+  residence_hall: Yup.string().required(),
+  school_year: Yup.string().required(),
+  section: Yup.string().required(),
+  semester: Yup.string().required(),
+  status: Yup.string().required(),
+  transportation_policy: Yup.boolean().required(),
+  transportation: Yup.string().required(),
+  tuition_fee: Yup.string().required(),
+});
 
 export const StudentCreate: React.FC<IResourceComponentsProps> = () => {
   const {
@@ -26,17 +65,17 @@ export const StudentCreate: React.FC<IResourceComponentsProps> = () => {
     setFieldValue,
     refineCore: { formLoading },
     values,
-  } = useForm({
+    errors,
+  } = useForm<StudentSchema>({
     initialValues: {
       academic_status: "",
-      account_status: "",
+      account_status: "inactive",
       address: "",
-      age: "",
+      age: null,
       asother: "",
       citizenship: "",
-      created_at: "",
       date_of_birth: new Date(),
-      document_approval: "",
+      document_approval: false,
       email: "",
       family_card_number: "",
       father_address: "",
@@ -45,7 +84,7 @@ export const StudentCreate: React.FC<IResourceComponentsProps> = () => {
       father_name: "",
       father_occupation: "",
       father_phone_number: "",
-      finance_policy: "",
+      finance_policy: false,
       first_name: "",
       gender: "male",
       grade: "",
@@ -74,25 +113,30 @@ export const StudentCreate: React.FC<IResourceComponentsProps> = () => {
       registration_number: "",
       religion: "",
       residence_hall_payment: "",
-      residence_hall_policy: "",
+      residence_hall_policy: false,
       residence_hall: "",
       school_year: "",
       section: "",
       semester: "",
       status: "new",
-      student_id: "",
-      test_approval: "",
-      transportation_policy: "",
+      test_approval: false,
+      transportation_policy: false,
       transportation: "",
       tuition_fee: "",
-      updated_at: "",
     },
+    validate: yupResolver(SCHEMA),
   });
+
+  const schoolYears = React.useMemo(() => {
+    const arr = [...STUDENT_IMPORT_SCHEMA["school_year"].fieldType.options];
+    return _reverse(arr);
+  }, []);
 
   return (
     <Create isLoading={formLoading} saveButtonProps={saveButtonProps}>
       <Card mb="sm">
         <Create.Header />
+        {JSON.stringify(errors)}
         <Group mt="lg">
           <Radio.Group label="Student" {...getInputProps("status")}>
             <Radio label="New" value="new" />
@@ -115,15 +159,8 @@ export const StudentCreate: React.FC<IResourceComponentsProps> = () => {
             size="xs"
             withinPortal
             label="School Year"
-            data={STUDENT_IMPORT_SCHEMA["school_year"].fieldType.options}
+            data={schoolYears}
             {...getInputProps("school_year")}
-          />
-          <TextInput
-            mt="sm"
-            mx="xs"
-            size="xs"
-            label="Student ID"
-            {...getInputProps("student_id")}
           />
           <Box sx={{ flex: 1 }} />
           <TextInput
@@ -230,7 +267,8 @@ export const StudentCreate: React.FC<IResourceComponentsProps> = () => {
             readOnly
             {...getInputProps("age")}
             value={
-              new Date().getFullYear() - moment(values["date_of_birth"]).year()
+              new Date().getFullYear() -
+              moment(values["date_of_birth"] as string).year()
             }
           />
         </Flex>
@@ -285,13 +323,14 @@ export const StudentCreate: React.FC<IResourceComponentsProps> = () => {
         </Flex>
         <Flex mx="-xs">
           <Group grow w={"75%"} spacing={0}>
-            <Select
+            <TextInput
+              w={"25%"}
               mt="sm"
               mx="xs"
               size="xs"
-              withinPortal
               label="Status"
-              data={STUDENT_IMPORT_SCHEMA["status"].fieldType.options}
+              variant="unstyled"
+              readOnly
               {...getInputProps("status")}
             />
             <TextInput
@@ -415,8 +454,8 @@ export const StudentCreate: React.FC<IResourceComponentsProps> = () => {
             size="xs"
             {...getInputProps("transportation_policy")}
           >
-            <Radio label="Signed" value="signed" />
-            <Radio label="Not Signed" value="not_signed" />
+            <Radio label="Signed" value={"true"} />
+            <Radio label="Not Signed" value={"false"} />
           </Radio.Group>
         </Flex>
         <Flex mx="-xs">
@@ -641,7 +680,7 @@ export const StudentCreate: React.FC<IResourceComponentsProps> = () => {
       <Card mt="lg">
         <Create.Footer />
       </Card>
-      <Space h={"25vh"}/>
+      <Space h={"25vh"} />
     </Create>
   );
 };

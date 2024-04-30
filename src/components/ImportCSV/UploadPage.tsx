@@ -119,8 +119,6 @@ export const UploadPage: FC<{
             onDrop={handleDrop}
             accept={["text/csv"]}
             maxFiles={1}
-            size="lg"
-            label="Drop files here or click to select"
           >
             <Group
               position="center"

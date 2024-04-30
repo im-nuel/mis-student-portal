@@ -4,7 +4,6 @@ import { Type } from "@feathersjs/typebox";
 export const studentSchema = Type.Object(
   {
     id: Type.Number(),
-    student_id: Type.String(),
     nisn: Type.String(),
 
     last_name: Type.String(),

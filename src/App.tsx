@@ -96,6 +96,15 @@ function App() {
                   useNewQueryKeys: true,
                   projectId: "teuyVR-cAfitN-jzHsGf",
                   disableTelemetry: true,
+                  reactQuery: {
+                    clientConfig: {
+                      defaultOptions: {
+                        mutations: {
+                          networkMode: "always",
+                        },
+                      },
+                    },
+                  },
                 }}
               >
                 <Routes>
