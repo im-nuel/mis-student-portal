@@ -3,7 +3,7 @@ import {
   AuthActionResponse,
   CheckResponse,
   IdentityResponse,
-} from "@refinedev/core/dist/interfaces";
+} from "@refinedev/core/dist/contexts/auth/types";
 import { AuthenticationResult } from "@feathersjs/authentication";
 import { feathers } from "./client";
 
