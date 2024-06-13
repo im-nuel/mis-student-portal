@@ -1,10 +1,18 @@
-import { IResourceComponentsProps, useShow } from "@refinedev/core";
+import { IResourceComponentsProps, useList, useShow } from "@refinedev/core";
 import { Show } from "../../components/page/Show";
-import { Box, Card, Divider, Flex, Group, Title } from "@mantine/core";
+import { Box, Button, Card, Divider, Flex, Group, Title } from "@mantine/core";
 import { Text } from "@mantine/core";
 import moment from "moment";
 import { StudentSchema } from "../../provider/schema/student.schema";
 import { cm2px } from "../../provider/utils/convertCM2PX";
+import { DocumentPreview } from "./documentPreview";
+import { IconDownload, IconPrinter } from "@tabler/icons-react";
+import { Link } from "react-router-dom";
+import { saveAs } from "file-saver";
+import { SiteConfigSchema } from "../../provider/schema/site-config";
+import { useEffect } from "react";
+import { DocumentPrint } from "./documentPrint";
+import { StudentShowPrint } from "./show_print";
 
 export const StudentShow: React.FC<IResourceComponentsProps> = () => {
   const { queryResult } = useShow();
@@ -15,7 +23,16 @@ export const StudentShow: React.FC<IResourceComponentsProps> = () => {
   return (
     <Show isLoading={isLoading}>
       <Card>
-        <Show.Header />
+        <Show.Header
+          headerButtons={(props) => {
+            return (
+              <>
+                {props.defaultButtons}
+                <DocumentPrint record={record} />
+              </>
+            );
+          }}
+        />
         <Box mt={"md"}>
           <Title order={3}>Student ID {record["id"]}</Title>
           <Flex mb="lg">
@@ -32,17 +49,6 @@ export const StudentShow: React.FC<IResourceComponentsProps> = () => {
               <Text>{record["nisn"]}</Text>
             </Box>
           </Flex>
-        </Box>
-      </Card>
-      <Card>
-        <Box
-          sx={{
-            width: cm2px(21),
-            height: cm2px(29.7),
-            padding: cm2px(1),
-          }}
-        >
-          
         </Box>
       </Card>
       <Box mt="md">
@@ -98,7 +104,7 @@ export const StudentShow: React.FC<IResourceComponentsProps> = () => {
                 <Text mt="sm" mb={3} size={"xs"}>
                   Date of Birth
                 </Text>
-                <Text>{record.date_of_birth}</Text>
+                <Text>{moment(record.date_of_birth).format("MMMM DD, yyyy")}</Text>
               </Box>
             </Group>
             <Box>

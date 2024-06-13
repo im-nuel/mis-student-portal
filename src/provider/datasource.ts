@@ -34,7 +34,7 @@ export const dataProvider = (): Omit<
       query.$sort = generatedSort;
     }
 
-    const { data, total } = await service.find({
+    const { data, total, skip, limit } = await service.find({
       query,
       headers: headersFromMeta,
     });
@@ -42,6 +42,8 @@ export const dataProvider = (): Omit<
     return {
       data,
       total,
+      skip,
+      limit,
     };
   },
 
@@ -88,7 +90,7 @@ export const dataProvider = (): Omit<
   getOne: async ({ resource, id, meta }) => {
     const service = feathers.service(resource);
 
-    const { headers } = meta ?? {};
+    const { headers, query } = meta ?? {};
 
     const data = await service.get(id, { headers });
 

@@ -50,7 +50,7 @@ export const StudentList: React.FC<IResourceComponentsProps> = () => {
           const value = capitalizeString(
             `${!!student.last_name ? student.last_name + ", " : ""}${
               student.first_name
-            }${student.middle_name ? student.middle_name : ""}`
+            }${student.middle_name ? ` ${student.middle_name}` : ""}`
           );
           return <TextField value={value} />;
         },

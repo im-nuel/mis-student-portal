@@ -1,7 +1,7 @@
 import React from "react";
 import moment from "moment";
 import { IResourceComponentsProps } from "@refinedev/core";
-import { Create, Edit, useForm } from "@refinedev/mantine";
+import { useForm } from "@refinedev/mantine";
 import {
   Select,
   TextInput,
@@ -14,12 +14,11 @@ import {
   Title,
   Card,
   Textarea,
-  Image,
   AspectRatio,
-  UnstyledButton,
   Switch,
   useMantineTheme,
   Input,
+  Container,
 } from "@mantine/core";
 import { STUDENT_IMPORT_SCHEMA } from "./studentImportSchema";
 import { DatePicker } from "@mantine/dates";
@@ -32,6 +31,10 @@ import { IconCheck, IconX } from "@tabler/icons-react";
 import * as Yup from "yup";
 import { yupResolver } from "@mantine/form";
 import _reverse from "lodash/reverse";
+import { Edit } from "../../components/page/Edit";
+import { EditHeader } from "../../components/page/Edit/EditHeader";
+import { EditFooter } from "../../components/page/Edit/EditFooter";
+import { DeveloperInspect } from "../../components/dev_inspect";
 
 const SCHEMA = Yup.object().shape({
   academic_status: Yup.string().required(),
@@ -75,6 +78,7 @@ export const StudentEdit: React.FC<IResourceComponentsProps> = () => {
     setFieldValue,
     refineCore: { formLoading },
     values,
+    errors,
   } = useForm({
     initialValues: {
       id: undefined,
@@ -84,7 +88,7 @@ export const StudentEdit: React.FC<IResourceComponentsProps> = () => {
       age: "",
       asother: "",
       citizenship: "",
-      date_of_birth: new Date(),
+      date_of_birth: undefined,
       email: "",
       family_card_number: "",
       father_address: "",
@@ -134,6 +138,12 @@ export const StudentEdit: React.FC<IResourceComponentsProps> = () => {
 
       profile_image_url: "",
     },
+    transformValues: (values) => {
+      return {
+        ...values,
+        date_of_birth: moment(values.date_of_birth).toISOString(true),
+      };
+    },
     validate: yupResolver(SCHEMA),
   });
 
@@ -143,6 +153,7 @@ export const StudentEdit: React.FC<IResourceComponentsProps> = () => {
     const res = await imagekit.upload({
       file: (await blobUrlToBase64(image.croppedImage)) as any,
       fileName: filename,
+      folder: "/mis-portal/student-pitures",
     });
     setFieldValue("profile_image_url", res.url);
   };
@@ -154,575 +165,348 @@ export const StudentEdit: React.FC<IResourceComponentsProps> = () => {
 
   return (
     <Edit isLoading={formLoading} saveButtonProps={saveButtonProps}>
-      <Group>
-        <AspectRatio ratio={4 / 6} sx={{ maxWidth: 100, width: "100%" }}>
-          <PicturePicker
-            previewImage={values.profile_image_url}
-            onSubmit={imageUploadHandler}
-          />
-        </AspectRatio>
-        <div>
-          <TextInput
-            label="Student ID"
-            readOnly
-            {...getInputProps("id")}
-            variant="unstyled"
-          />
-          <Radio.Group
-            mt="sm"
-            label="Student Status"
-            {...getInputProps("status")}
-          >
-            <Radio label="New" value="new" />
-            <Radio label="Old" value="old" />
-            <Radio label="Transfer" value="transfer" />
-          </Radio.Group>
-        </div>
-      </Group>
-      <Flex mx={"-xs"} mb="lg">
-        <Select
-          mt="sm"
-          mx="xs"
-          size="xs"
-          label="Semester"
-          data={STUDENT_IMPORT_SCHEMA["semester"].fieldType.options}
-          {...getInputProps("semester")}
-        />
-        <Select
-          mt="sm"
-          mx="xs"
-          size="xs"
-          withinPortal
-          label="School Year"
-          data={schoolYears}
-          {...getInputProps("school_year")}
-        />
-        <Box sx={{ flex: 1 }} />
-        <TextInput
-          mt="sm"
-          mx="xs"
-          size="xs"
-          label="Registration Number"
-          {...getInputProps("registration_number")}
-        />
-      </Flex>
-      <Card shadow="sm" withBorder>
-        <Title order={4} align="center">
-          Student Information
-        </Title>
-        <Text mt="sm" mb={3} size={"xs"}>
-          Full Name
-        </Text>
-        <Flex mx="-sm">
-          <Flex w={"75%"}>
-            <TextInput
-              mx="sm"
-              size="xs"
-              placeholder="Last Name"
-              {...getInputProps("last_name")}
-            />
-            <TextInput
-              size="xs"
-              placeholder="First Name"
-              {...getInputProps("first_name")}
-            />
-            <TextInput
-              mx="sm"
-              size="xs"
-              placeholder="Middle Name"
-              {...getInputProps("middle_name")}
-            />
-          </Flex>
-          <TextInput
-            w={"25%"}
-            mx="sm"
-            size="xs"
-            placeholder="Nickname"
-            {...getInputProps("nickname")}
-          />
-        </Flex>
-        <Flex mx="-xs">
-          <Flex w={"75%"}>
-            <TextInput
-              mt="sm"
-              mx="xs"
-              size="xs"
-              label="Rank In Family"
-              {...getInputProps("rank_in_family")}
-            />
-            <Box sx={{ flex: 1 }} />
-          </Flex>
-
-          <Radio.Group
-            w={"25%"}
-            mt="sm"
-            mx="xs"
-            size="xs"
-            label="Gender"
-            {...getInputProps("gender")}
-          >
-            <Radio label="Male" value="male" />
-            <Radio label="Female" value="female" />
-          </Radio.Group>
-        </Flex>
-        <Flex mx="-xs">
-          <Group grow w={"75%"} spacing={0}>
-            <TextInput
-              mt="sm"
-              mx="xs"
-              size="xs"
-              label="Citizenship"
-              {...getInputProps("citizenship")}
-            />
-            <TextInput
-              mt="sm"
-              mx="xs"
-              size="xs"
-              label="Place Of Birth"
-              {...getInputProps("place_of_birth")}
-            />
-            <DatePicker
-              mt="sm"
-              mx="xs"
-              size="xs"
-              withinPortal
-              label="Date Of Birth"
-              {...getInputProps("date_of_birth")}
-            />
+      <Container>
+        <Card withBorder>
+          <Edit.Header />
+          <Group mt="lg">
+            <AspectRatio ratio={4 / 6} sx={{ maxWidth: 100, width: "100%" }}>
+              <PicturePicker
+                previewImage={values.profile_image_url}
+                onSubmit={imageUploadHandler}
+              />
+            </AspectRatio>
+            <div>
+              <TextInput
+                label="Student ID"
+                readOnly
+                {...getInputProps("id")}
+                variant="unstyled"
+              />
+              <Radio.Group
+                mt="sm"
+                label="Student Status"
+                {...getInputProps("status")}
+              >
+                <Radio label="New" value="new" />
+                <Radio label="Old" value="old" />
+                <Radio label="Transfer" value="transfer" />
+              </Radio.Group>
+            </div>
           </Group>
-          <TextInput
-            w={"25%"}
-            mt="sm"
-            mx="xs"
-            size="xs"
-            label="Age"
-            variant="unstyled"
-            readOnly
-            {...getInputProps("age")}
-            value={
-              new Date().getFullYear() - moment(values["date_of_birth"]).year()
-            }
-          />
-        </Flex>
-        <Flex mx="-xs">
-          <Flex w={"75%"}>
-            <Textarea
+          <Flex mx={"-xs"} mb="lg">
+            <Select
               mt="sm"
               mx="xs"
               size="xs"
-              autosize
-              w={"100%"}
-              label="Address"
-              {...getInputProps("address")}
+              label="Semester"
+              data={STUDENT_IMPORT_SCHEMA["semester"].fieldType.options}
+              {...getInputProps("semester")}
             />
-          </Flex>
-          <TextInput
-            w={"25%"}
-            mt="sm"
-            mx="xs"
-            size="xs"
-            label="Phone Number"
-            {...getInputProps("phone_number")}
-          />
-        </Flex>
-        <Flex mx="-xs">
-          <Group grow w={"75%"} spacing={0}>
-            <TextInput
-              mt="sm"
-              mx="xs"
-              size="xs"
-              label="Email"
-              {...getInputProps("email")}
-            />
-            <TextInput
-              mt="sm"
-              mx="xs"
-              size="xs"
-              label="Previous School"
-              {...getInputProps("previous_school")}
-            />
-          </Group>
-          <Select
-            w={"25%"}
-            mt="sm"
-            mx="xs"
-            size="xs"
-            withinPortal
-            label="Religion"
-            data={STUDENT_IMPORT_SCHEMA["religion"].fieldType.options}
-            {...getInputProps("religion")}
-          />
-        </Flex>
-        <Flex mx="-xs">
-          <Group grow w={"75%"} spacing={0}>
-            <TextInput
-              label="Student ID"
-              mt="sm"
-              mx="xs"
-              size="xs"
-              readOnly
-              {...getInputProps("status")}
-              variant="unstyled"
-            />
-            <TextInput
-              mt="sm"
-              mx="xs"
-              size="xs"
-              label="Academic Status"
-              {...getInputProps("academic_status")}
-            />
-          </Group>
-          <TextInput
-            w={"25%"}
-            mt="sm"
-            mx="xs"
-            size="xs"
-            label="Family Card Number"
-            {...getInputProps("family_card_number")}
-          />
-        </Flex>
-      </Card>
-
-      <Card shadow="sm" withBorder mt="lg">
-        <Title order={4} align="center">
-          Program
-        </Title>
-        <Group mx="-xs" grow spacing={0}>
-          <Select
-            mt="sm"
-            mx="xs"
-            size="xs"
-            withinPortal
-            label="Section"
-            {...getInputProps("section")}
-            data={STUDENT_IMPORT_SCHEMA["section"].fieldType.options}
-          />
-          <Select
-            mt="sm"
-            mx="xs"
-            size="xs"
-            withinPortal
-            label="Grade"
-            {...getInputProps("grade")}
-            data={STUDENT_IMPORT_SCHEMA["grade"].fieldType.options}
-          />
-        </Group>
-        <Group mx="-xs" grow spacing={0}>
-          <Box w="50%">
             <Select
               mt="sm"
               mx="xs"
               size="xs"
               withinPortal
-              label="Program"
-              {...getInputProps("program")}
-              data={[
-                {
-                  label: "National",
-                  value: "national",
-                },
-                {
-                  label: "A Beka",
-                  value: "abeka",
-                },
-                {
-                  label: "Cambridge",
-                  value: "cambridge",
-                },
-                {
-                  label: "Others",
-                  value: "others",
-                },
-              ]}
+              label="School Year"
+              data={schoolYears}
+              {...getInputProps("school_year")}
             />
-          </Box>
-          <Box w="50%">
-            {values["program"] === "others" && (
+            <Box sx={{ flex: 1 }} />
+            <TextInput
+              mt="sm"
+              mx="xs"
+              size="xs"
+              label="Registration Number"
+              {...getInputProps("registration_number")}
+            />
+          </Flex>
+        </Card>
+        <Card shadow="sm" withBorder mt="lg">
+          <Title order={4} align="center">
+            Student Information
+          </Title>
+          <Text mt="sm" mb={3} size={"xs"}>
+            Full Name
+          </Text>
+          <Flex mx="-sm">
+            <Flex w={"75%"}>
+              <TextInput
+                mx="sm"
+                size="xs"
+                placeholder="Last Name"
+                {...getInputProps("last_name")}
+              />
+              <TextInput
+                size="xs"
+                placeholder="First Name"
+                {...getInputProps("first_name")}
+              />
+              <TextInput
+                mx="sm"
+                size="xs"
+                placeholder="Middle Name"
+                {...getInputProps("middle_name")}
+              />
+            </Flex>
+            <TextInput
+              w={"25%"}
+              mx="sm"
+              size="xs"
+              placeholder="Nickname"
+              {...getInputProps("nickname")}
+            />
+          </Flex>
+          <Flex mx="-xs">
+            <Flex w={"75%"}>
               <TextInput
                 mt="sm"
                 mx="xs"
                 size="xs"
-                label="Other Program"
-                {...getInputProps("other_program")}
+                label="Rank In Family"
+                {...getInputProps("rank_in_family")}
               />
-            )}
-          </Box>
-        </Group>
-      </Card>
+              <Box sx={{ flex: 1 }} />
+            </Flex>
 
-      <Card shadow="sm" withBorder mt="lg">
-        <Title order={4} align="center">
-          Facilities
-        </Title>
-        <Flex mx="-xs">
-          <Group grow w={"75%"} spacing={0}>
+            <Radio.Group
+              w={"25%"}
+              mt="sm"
+              mx="xs"
+              size="xs"
+              label="Gender"
+              {...getInputProps("gender")}
+            >
+              <Radio label="Male" value="male" />
+              <Radio label="Female" value="female" />
+            </Radio.Group>
+          </Flex>
+          <Flex mx="-xs">
+            <Group grow w={"75%"} spacing={0}>
+              <TextInput
+                mt="sm"
+                mx="xs"
+                size="xs"
+                label="Citizenship"
+                {...getInputProps("citizenship")}
+              />
+              <TextInput
+                mt="sm"
+                mx="xs"
+                size="xs"
+                label="Place Of Birth"
+                {...getInputProps("place_of_birth")}
+              />
+              <DatePicker
+                mt="sm"
+                mx="xs"
+                size="xs"
+                withinPortal
+                label="Date Of Birth"
+                {...getInputProps("date_of_birth")}
+                value={moment(values.date_of_birth).toDate()}
+              />
+            </Group>
+            <TextInput
+              w={"25%"}
+              mt="sm"
+              mx="xs"
+              size="xs"
+              label="Age"
+              variant="unstyled"
+              readOnly
+              {...getInputProps("age")}
+              value={
+                new Date().getFullYear() -
+                moment(values["date_of_birth"]).year()
+              }
+            />
+          </Flex>
+          <Flex mx="-xs">
+            <Flex w={"75%"}>
+              <Textarea
+                mt="sm"
+                mx="xs"
+                size="xs"
+                autosize
+                w={"100%"}
+                label="Address"
+                {...getInputProps("address")}
+              />
+            </Flex>
+            <TextInput
+              w={"25%"}
+              mt="sm"
+              mx="xs"
+              size="xs"
+              label="Phone Number"
+              {...getInputProps("phone_number")}
+            />
+          </Flex>
+          <Flex mx="-xs">
+            <Group grow w={"75%"} spacing={0}>
+              <TextInput
+                mt="sm"
+                mx="xs"
+                size="xs"
+                label="Email"
+                {...getInputProps("email")}
+              />
+              <TextInput
+                mt="sm"
+                mx="xs"
+                size="xs"
+                label="Previous School"
+                {...getInputProps("previous_school")}
+              />
+            </Group>
+            <Select
+              w={"25%"}
+              mt="sm"
+              mx="xs"
+              size="xs"
+              withinPortal
+              label="Religion"
+              data={STUDENT_IMPORT_SCHEMA["religion"].fieldType.options}
+              {...getInputProps("religion")}
+            />
+          </Flex>
+          <Flex mx="-xs">
+            <Group grow w={"75%"} spacing={0}>
+              <TextInput
+                label="Student Status"
+                mt="sm"
+                mx="xs"
+                size="xs"
+                readOnly
+                {...getInputProps("status")}
+                variant="unstyled"
+              />
+              <TextInput
+                mt="sm"
+                mx="xs"
+                size="xs"
+                label="Academic Status"
+                {...getInputProps("academic_status")}
+              />
+            </Group>
+            <TextInput
+              w={"25%"}
+              mt="sm"
+              mx="xs"
+              size="xs"
+              label="Family Card Number"
+              {...getInputProps("family_card_number")}
+            />
+          </Flex>
+        </Card>
+
+        <Card shadow="sm" withBorder mt="lg">
+          <Title order={4} align="center">
+            Program
+          </Title>
+          <Group mx="-xs" grow spacing={0}>
+            <Select
+              mt="sm"
+              mx="xs"
+              size="xs"
+              withinPortal
+              label="Section"
+              {...getInputProps("section")}
+              data={STUDENT_IMPORT_SCHEMA["section"].fieldType.options}
+            />
+            <Select
+              mt="sm"
+              mx="xs"
+              size="xs"
+              withinPortal
+              label="Grade"
+              {...getInputProps("grade")}
+              data={STUDENT_IMPORT_SCHEMA["grade"].fieldType.options}
+            />
+          </Group>
+          <Group mx="-xs" grow spacing={0}>
             <Box w="50%">
               <Select
                 mt="sm"
                 mx="xs"
                 size="xs"
                 withinPortal
-                label="Transportation"
-                data={STUDENT_IMPORT_SCHEMA["transportation"].fieldType.options}
-                {...getInputProps("transportation")}
+                label="Program"
+                {...getInputProps("program")}
+                data={[
+                  {
+                    label: "National",
+                    value: "national",
+                  },
+                  {
+                    label: "A Beka",
+                    value: "abeka",
+                  },
+                  {
+                    label: "Cambridge",
+                    value: "cambridge",
+                  },
+                  {
+                    label: "Others",
+                    value: "others",
+                  },
+                ]}
               />
             </Box>
             <Box w="50%">
-              {values["transportation"] === "school_bus" && (
+              {values["program"] === "others" && (
                 <TextInput
                   mt="sm"
                   mx="xs"
                   size="xs"
-                  label="Pick Up Point"
-                  {...getInputProps("pick_up_point")}
+                  label="Other Program"
+                  {...getInputProps("other_program")}
                 />
               )}
             </Box>
           </Group>
-          <Box mt="sm">
-            <Input.Label size="xs" mb="xs">
-              Transportation Policy
-            </Input.Label>
-            <Switch
-              label={"Signed"}
-              size="sm"
-              thumbIcon={
-                values["transportation_policy"] ? (
-                  <IconCheck
-                    size={12}
-                    color={theme.colors.teal[theme.fn.primaryShade()]}
-                    stroke={3}
-                  />
-                ) : (
-                  <IconX
-                    size={12}
-                    color={theme.colors.red[theme.fn.primaryShade()]}
-                    stroke={3}
-                  />
-                )
-              }
-              {...getInputProps("transportation_policy")}
-              checked={values["transportation_policy"]}
-            />
-          </Box>
-        </Flex>
-        <Flex mx="-xs">
-          <Group grow w={"75%"} spacing={0}>
-            <Box w="50%">
-              <Select
-                mt="sm"
-                mx="xs"
-                size="xs"
-                withinPortal
-                data={STUDENT_IMPORT_SCHEMA["residence_hall"].fieldType.options}
-                label="Residence Hall"
-                {...getInputProps("residence_hall")}
-              />
-            </Box>
-            <Box w="50%" />
-          </Group>
-          <Box mt="sm">
-            <Input.Label size="xs" mb="xs">
-              Residence Hall Policy
-            </Input.Label>
-            <Switch
-              label={"Signed"}
-              size="sm"
-              thumbIcon={
-                values["residence_hall_policy"] ? (
-                  <IconCheck
-                    size={12}
-                    color={theme.colors.teal[theme.fn.primaryShade()]}
-                    stroke={3}
-                  />
-                ) : (
-                  <IconX
-                    size={12}
-                    color={theme.colors.red[theme.fn.primaryShade()]}
-                    stroke={3}
-                  />
-                )
-              }
-              {...getInputProps("residence_hall_policy")}
-              // checked={values["residence_hall_policy"]}
-              checked={values["residence_hall_policy"]}
-            />
-          </Box>
-        </Flex>
-      </Card>
+        </Card>
 
-      <Card shadow="sm" withBorder mt="lg">
-        <Title order={4} align="center">
-          Parent / Guardian Information
-        </Title>
-        <Group grow spacing={0}>
-          <Box>
-            <TextInput
-              mt="sm"
-              mx="xs"
-              size="xs"
-              label="Father Name"
-              {...getInputProps("father_name")}
-            />
-          </Box>
-          <Box>
-            <TextInput
-              mt="sm"
-              mx="xs"
-              size="xs"
-              label="Father Occupation"
-              {...getInputProps("father_occupation")}
-            />
-          </Box>
-        </Group>
-        <Group grow spacing={0}>
-          <Box>
-            <TextInput
-              mt="sm"
-              mx="xs"
-              size="xs"
-              label="Father Company"
-              {...getInputProps("father_company")}
-            />
-          </Box>
-          <Box>
-            <TextInput
-              mt="sm"
-              mx="xs"
-              size="xs"
-              label="Father Address"
-              {...getInputProps("father_address")}
-            />
-          </Box>
-        </Group>
-        <Group grow spacing={0}>
-          <Box>
-            <TextInput
-              mt="sm"
-              mx="xs"
-              size="xs"
-              label="Father Phone Number"
-              {...getInputProps("father_phone_number")}
-            />
-          </Box>
-          <Box>
-            <TextInput
-              mt="sm"
-              mx="xs"
-              size="xs"
-              label="Father Email"
-              {...getInputProps("father_email")}
-            />
-          </Box>
-        </Group>
-        <Divider mt="lg" />
-        <Group grow spacing={0}>
-          <Box>
-            <TextInput
-              mt="sm"
-              mx="xs"
-              size="xs"
-              label="Mother Name"
-              {...getInputProps("mother_name")}
-            />
-          </Box>
-          <Box>
-            <TextInput
-              mt="sm"
-              mx="xs"
-              size="xs"
-              label="Mother Occupation"
-              {...getInputProps("mother_occupation")}
-            />
-          </Box>
-        </Group>
-        <Group grow spacing={0}>
-          <Box>
-            <TextInput
-              mt="sm"
-              mx="xs"
-              size="xs"
-              label="Mother Company"
-              {...getInputProps("mother_company")}
-            />
-          </Box>
-          <Box>
-            <TextInput
-              mt="sm"
-              mx="xs"
-              size="xs"
-              label="Mother Address"
-              {...getInputProps("mother_address")}
-            />
-          </Box>
-        </Group>
-        <Divider mt="lg" />
-        <Group grow spacing={0}>
-          <Box>
-            <TextInput
-              mt="sm"
-              mx="xs"
-              size="xs"
-              label="Authorized Guardian Name"
-              {...getInputProps("guardian_name")}
-            />
-          </Box>
-          <Box>
-            <TextInput
-              mt="sm"
-              mx="xs"
-              size="xs"
-              label="Guardian Relation to Student"
-              {...getInputProps("guardian_relation")}
-            />
-          </Box>
-        </Group>
-        <Group grow spacing={0}>
-          <Box>
-            <TextInput
-              mt="sm"
-              mx="xs"
-              size="xs"
-              label="Guardian Address"
-              {...getInputProps("mother_company")}
-            />
-          </Box>
-          <Box>
-            <TextInput
-              mt="sm"
-              mx="xs"
-              size="xs"
-              label="Guardian Phone Number"
-              {...getInputProps("guardian_phone_number")}
-            />
-          </Box>
-        </Group>
-      </Card>
-
-      <Card shadow="sm" withBorder mt="lg">
-        <Title order={4} align="center">
-          Term of Payment
-        </Title>
-        <Group grow>
-          <Box w="75%">
-            <Select
-              mt="sm"
-              size="xs"
-              label="A. Tuition Fee"
-              {...getInputProps("tuition_fee")}
-              data={STUDENT_IMPORT_SCHEMA["tuition_fee"].fieldType.options}
-            />
-          </Box>
-          <Box w="25%">
+        <Card shadow="sm" withBorder mt="lg">
+          <Title order={4} align="center">
+            Facilities
+          </Title>
+          <Flex mx="-xs">
+            <Group grow w={"75%"} spacing={0}>
+              <Box w="50%">
+                <Select
+                  mt="sm"
+                  mx="xs"
+                  size="xs"
+                  withinPortal
+                  label="Transportation"
+                  data={
+                    STUDENT_IMPORT_SCHEMA["transportation"].fieldType.options
+                  }
+                  {...getInputProps("transportation")}
+                />
+              </Box>
+              <Box w="50%">
+                {values["transportation"] === "school_bus" && (
+                  <TextInput
+                    mt="sm"
+                    mx="xs"
+                    size="xs"
+                    label="Pick Up Point"
+                    {...getInputProps("pick_up_point")}
+                  />
+                )}
+              </Box>
+            </Group>
             <Box mt="sm">
               <Input.Label size="xs" mb="xs">
-                Finance Policy
+                Transportation Policy
               </Input.Label>
               <Switch
                 label={"Signed"}
                 size="sm"
                 thumbIcon={
-                  values["finance_policy"] ? (
+                  values["transportation_policy"] ? (
                     <IconCheck
                       size={12}
                       color={theme.colors.teal[theme.fn.primaryShade()]}
@@ -736,30 +520,276 @@ export const StudentEdit: React.FC<IResourceComponentsProps> = () => {
                     />
                   )
                 }
-                {...getInputProps("finance_policy")}
-                checked={values["finance_policy"]}
+                {...getInputProps("transportation_policy")}
+                checked={values["transportation_policy"]}
               />
             </Box>
-          </Box>
-        </Group>
-        <Group grow>
-          <Box w="75%">
-            <Select
-              mt="sm"
-              size="xs"
-              label="B. Residence Hall"
-              {...getInputProps("residence_hall_payment")}
-              data={
-                STUDENT_IMPORT_SCHEMA["residence_hall_payment"].fieldType
-                  .options
-              }
-            />
-          </Box>
-          <Box w="25%" />
-        </Group>
-      </Card>
-      {/* <TextInput mt="sm" label="Nisn" {...getInputProps("nisn")} /> */}
-      {/* <TextInput mt="sm" label="Asother" {...getInputProps("asother")} /> */}
+          </Flex>
+          <Flex mx="-xs">
+            <Group grow w={"75%"} spacing={0}>
+              <Box w="50%">
+                <Select
+                  mt="sm"
+                  mx="xs"
+                  size="xs"
+                  withinPortal
+                  data={
+                    STUDENT_IMPORT_SCHEMA["residence_hall"].fieldType.options
+                  }
+                  label="Residence Hall"
+                  {...getInputProps("residence_hall")}
+                />
+              </Box>
+              <Box w="50%" />
+            </Group>
+            <Box mt="sm">
+              <Input.Label size="xs" mb="xs">
+                Residence Hall Policy
+              </Input.Label>
+              <Switch
+                label={"Signed"}
+                size="sm"
+                thumbIcon={
+                  values["residence_hall_policy"] ? (
+                    <IconCheck
+                      size={12}
+                      color={theme.colors.teal[theme.fn.primaryShade()]}
+                      stroke={3}
+                    />
+                  ) : (
+                    <IconX
+                      size={12}
+                      color={theme.colors.red[theme.fn.primaryShade()]}
+                      stroke={3}
+                    />
+                  )
+                }
+                {...getInputProps("residence_hall_policy")}
+                // checked={values["residence_hall_policy"]}
+                checked={values["residence_hall_policy"]}
+              />
+            </Box>
+          </Flex>
+        </Card>
+
+        <Card shadow="sm" withBorder mt="lg">
+          <Title order={4} align="center">
+            Parent / Guardian Information
+          </Title>
+          <Group grow spacing={0}>
+            <Box>
+              <TextInput
+                mt="sm"
+                mx="xs"
+                size="xs"
+                label="Father Name"
+                {...getInputProps("father_name")}
+              />
+            </Box>
+            <Box>
+              <TextInput
+                mt="sm"
+                mx="xs"
+                size="xs"
+                label="Father Occupation"
+                {...getInputProps("father_occupation")}
+              />
+            </Box>
+          </Group>
+          <Group grow spacing={0}>
+            <Box>
+              <TextInput
+                mt="sm"
+                mx="xs"
+                size="xs"
+                label="Father Company"
+                {...getInputProps("father_company")}
+              />
+            </Box>
+            <Box>
+              <TextInput
+                mt="sm"
+                mx="xs"
+                size="xs"
+                label="Father Address"
+                {...getInputProps("father_address")}
+              />
+            </Box>
+          </Group>
+          <Group grow spacing={0}>
+            <Box>
+              <TextInput
+                mt="sm"
+                mx="xs"
+                size="xs"
+                label="Father Phone Number"
+                {...getInputProps("father_phone_number")}
+              />
+            </Box>
+            <Box>
+              <TextInput
+                mt="sm"
+                mx="xs"
+                size="xs"
+                label="Father Email"
+                {...getInputProps("father_email")}
+              />
+            </Box>
+          </Group>
+          <Divider mt="lg" />
+          <Group grow spacing={0}>
+            <Box>
+              <TextInput
+                mt="sm"
+                mx="xs"
+                size="xs"
+                label="Mother Name"
+                {...getInputProps("mother_name")}
+              />
+            </Box>
+            <Box>
+              <TextInput
+                mt="sm"
+                mx="xs"
+                size="xs"
+                label="Mother Occupation"
+                {...getInputProps("mother_occupation")}
+              />
+            </Box>
+          </Group>
+          <Group grow spacing={0}>
+            <Box>
+              <TextInput
+                mt="sm"
+                mx="xs"
+                size="xs"
+                label="Mother Company"
+                {...getInputProps("mother_company")}
+              />
+            </Box>
+            <Box>
+              <TextInput
+                mt="sm"
+                mx="xs"
+                size="xs"
+                label="Mother Address"
+                {...getInputProps("mother_address")}
+              />
+            </Box>
+          </Group>
+          <Divider mt="lg" />
+          <Group grow spacing={0}>
+            <Box>
+              <TextInput
+                mt="sm"
+                mx="xs"
+                size="xs"
+                label="Authorized Guardian Name"
+                {...getInputProps("guardian_name")}
+              />
+            </Box>
+            <Box>
+              <TextInput
+                mt="sm"
+                mx="xs"
+                size="xs"
+                label="Guardian Relation to Student"
+                {...getInputProps("guardian_relation")}
+              />
+            </Box>
+          </Group>
+          <Group grow spacing={0}>
+            <Box>
+              <TextInput
+                mt="sm"
+                mx="xs"
+                size="xs"
+                label="Guardian Address"
+                {...getInputProps("mother_company")}
+              />
+            </Box>
+            <Box>
+              <TextInput
+                mt="sm"
+                mx="xs"
+                size="xs"
+                label="Guardian Phone Number"
+                {...getInputProps("guardian_phone_number")}
+              />
+            </Box>
+          </Group>
+        </Card>
+
+        <Card shadow="sm" withBorder mt="lg">
+          <Title order={4} align="center">
+            Term of Payment
+          </Title>
+          <Group grow>
+            <Box w="75%">
+              <Select
+                mt="sm"
+                size="xs"
+                label="A. Tuition Fee"
+                {...getInputProps("tuition_fee")}
+                data={STUDENT_IMPORT_SCHEMA["tuition_fee"].fieldType.options}
+              />
+            </Box>
+            <Box w="25%">
+              <Box mt="sm">
+                <Input.Label size="xs" mb="xs">
+                  Finance Policy
+                </Input.Label>
+                <Switch
+                  label={"Signed"}
+                  size="sm"
+                  thumbIcon={
+                    values["finance_policy"] ? (
+                      <IconCheck
+                        size={12}
+                        color={theme.colors.teal[theme.fn.primaryShade()]}
+                        stroke={3}
+                      />
+                    ) : (
+                      <IconX
+                        size={12}
+                        color={theme.colors.red[theme.fn.primaryShade()]}
+                        stroke={3}
+                      />
+                    )
+                  }
+                  {...getInputProps("finance_policy")}
+                  checked={values["finance_policy"]}
+                />
+              </Box>
+            </Box>
+          </Group>
+          <Group grow>
+            <Box w="75%">
+              <Select
+                mt="sm"
+                size="xs"
+                label="B. Residence Hall"
+                {...getInputProps("residence_hall_payment")}
+                data={
+                  STUDENT_IMPORT_SCHEMA["residence_hall_payment"].fieldType
+                    .options
+                }
+              />
+            </Box>
+            <Box w="25%" />
+          </Group>
+        </Card>
+        {/* <TextInput mt="sm" label="Nisn" {...getInputProps("nisn")} /> */}
+        {/* <TextInput mt="sm" label="Asother" {...getInputProps("asother")} /> */}
+
+        <Card withBorder mt="lg">
+          <DeveloperInspect
+            value={Object.keys(errors).length > 0 && JSON.stringify(errors)}
+          />
+          <Edit.Footer />
+        </Card>
+        <div style={{ height: "25vh" }}></div>
+      </Container>
     </Edit>
   );
 };

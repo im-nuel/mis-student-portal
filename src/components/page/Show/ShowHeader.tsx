@@ -26,7 +26,9 @@ import { RefinePageHeaderClassNames } from "@refinedev/ui-types";
 import { IconArrowLeft } from "@tabler/icons-react";
 import { useShowPageContext } from "./ShowPageProvider";
 
-export const ShowHeader: React.FC<ShowProps> = () => {
+export const ShowHeader: React.FC<ShowProps> = ({
+  headerButtons: headerButtonsFromDirectProps,
+}) => {
   const {
     resource: resourceFromProps,
     recordItemId,
@@ -34,7 +36,7 @@ export const ShowHeader: React.FC<ShowProps> = () => {
     canEdit,
     dataProviderName,
     isLoading,
-    headerButtons: headerButtonsFromProps,
+    headerButtons: headerButtonsFromContextProps,
     headerButtonProps,
     headerProps,
     goBack: goBackFromProps,
@@ -146,6 +148,9 @@ export const ShowHeader: React.FC<ShowProps> = () => {
         )}
       </ActionIcon>
     );
+
+  const headerButtonsFromProps =
+    headerButtonsFromDirectProps || headerButtonsFromContextProps;
 
   const headerButtons = headerButtonsFromProps
     ? typeof headerButtonsFromProps === "function"

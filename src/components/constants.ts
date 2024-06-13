@@ -5,9 +5,18 @@ export const IMAGEKIT_PUBLIC_KEY = import.meta.env
 export const IMAGEKIT_PRIVATE_KEY = import.meta.env
   .VITE_IMAGEKIT_PRIVATE_KEY as string;
 
+const USER_ROLE = {
+  ADMINISTRATOR: "administrator",
+  MAINTAINER: "maintainer",
+  STUDENT: "student",
+  PUBLIC: "public",
+};
+
 export const CONSTANTS = {
   SERVER_URL,
   IMAGEKIT_URL,
   IMAGEKIT_PUBLIC_KEY,
   IMAGEKIT_PRIVATE_KEY,
+
+  USER_ROLE
 };

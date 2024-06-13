@@ -9,6 +9,7 @@ import {
   ShowButton,
   DeleteButton,
   EmailField,
+  TextField,
 } from "@refinedev/mantine";
 import { UserSchema } from "../../provider/schema/user.schema";
 
@@ -26,6 +27,14 @@ export const UserList: React.FC<IResourceComponentsProps> = () => {
         header: "Email",
         cell: function render({ getValue }) {
           return <EmailField value={getValue<any>()} />;
+        },
+      },
+      {
+        id: "role",
+        accessorKey: "role",
+        header: "Role",
+        cell: function render({ getValue }) {
+          return <TextField value={getValue<any>()} />;
         },
       },
       {

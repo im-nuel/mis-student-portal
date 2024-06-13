@@ -46,10 +46,14 @@ export const generateFilter = (filters?: CrudFilters) => {
         }
 
         const mappedOperator = mapOperator(operator);
-        queryFilters[field as string] = {
-          ...(queryFilters as any)[field as string],
-          [mappedOperator]: value,
-        };
+        if (mappedOperator === "") {
+          queryFilters[field as string] = value;
+        } else {
+          queryFilters[field as string] = {
+            ...(queryFilters as any)[field as string],
+            [mappedOperator]: value,
+          };
+        }
       }
     });
   }
