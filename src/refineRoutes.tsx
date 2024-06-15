@@ -32,6 +32,7 @@ import {
 } from "@tabler/icons-react";
 import { ThemedLayoutV2 } from "./components/layout";
 import { DashboardPage } from "./pages/dashboard";
+import { ThemedHeaderV2 } from "./components/layout/header";
 
 export const RefineRoutes = () => {
   return (

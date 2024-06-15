@@ -1,6 +1,6 @@
 import { ActionIcon, Flex, Group, MantineColor, Text } from "@mantine/core";
 import { Card } from "@mantine/core";
-import { useList } from "@refinedev/core";
+import { CrudFilter, useList } from "@refinedev/core";
 import {
   IconArrowUpRight,
   IconUser,
@@ -9,27 +9,20 @@ import {
 import React from "react";
 
 type StatsCardProps = {
-  resource: string;
   label: string;
   title: string;
   icon: React.ReactNode;
   color: MantineColor;
+  value: string | number;
 };
 
 export const StatsCard: React.FC<StatsCardProps> = ({
-  resource,
   label,
   title,
   icon,
   color,
+  value,
 }) => {
-  const { data } = useList({
-    resource: resource,
-    pagination: {
-      pageSize: 0,
-    },
-  });
-
   return (
     <Card color="blue" withBorder>
       <Flex>
@@ -50,7 +43,7 @@ export const StatsCard: React.FC<StatsCardProps> = ({
       </Flex>
       <Group align="flex-end" mt="lg" spacing={"xs"}>
         <Text weight={"bold"} size={24} lh={1}>
-          {data?.total}
+          {value}
         </Text>
         <Text
           color="green"

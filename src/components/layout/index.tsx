@@ -59,7 +59,7 @@ export const ThemedLayoutV2: React.FC<RefineThemedLayoutV2Props> = ({
                   flex: 1,
                 }}
               >
-                <HeaderToRender />
+                <HeaderToRender sticky />
                 <Box
                   component="main"
                   sx={(theme) => ({

@@ -12,6 +12,7 @@ export const List: React.FC<ListProps> = (props) => {
       <Card p="md" {...wrapperProps}>
         {children}
       </Card>
+      <Box h={"25vh"} />
     </ListProvider>
   );
 };
