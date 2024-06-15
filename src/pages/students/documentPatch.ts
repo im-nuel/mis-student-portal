@@ -11,18 +11,19 @@ export const documentPatch = async (
   docuemntTemplateUrl: string,
   record: StudentSchema
 ) => {
+  const values = fillNullWithEmptyString(record) as StudentSchema;
   const section = {
-    ecp: false,
-    es: false,
-    ms: false,
-    hs: false,
+    ecp: values.section === "ECP",
+    es: values.section === "ES",
+    ms: values.section === "MS",
+    hs: values.section === "HS",
   };
 
   const program = {
-    uan: false,
-    abeka: false,
-    cambridge: false,
-    others: false,
+    uan: values.program === "UAN",
+    abeka: values.program === "ABEKA",
+    cambridge: values.program === "CAMBRIDGE",
+    others: !_.isEmpty(values.other_program),
   };
 
   const transportation = {
@@ -44,7 +45,7 @@ export const documentPatch = async (
         type: PatchType.PARAGRAPH,
         children: [
           new TextRun({
-            text: `${record.last_name}, ${record.first_name} ${record.middle_name}`,
+            text: `${values.last_name}, ${values.first_name} ${values.middle_name}`,
           }),
         ],
       },
@@ -52,72 +53,72 @@ export const documentPatch = async (
         type: PatchType.PARAGRAPH,
         children: [
           new TextRun({
-            text: record.school_year,
+            text: values.school_year,
           }),
         ],
       },
       rank_in_fam: {
         type: PatchType.PARAGRAPH,
-        children: [new TextRun(record.rank_in_family)],
+        children: [new TextRun(values.rank_in_family)],
       },
       grade: {
         type: PatchType.PARAGRAPH,
-        children: [new TextRun(record.grade)],
+        children: [new TextRun(values.grade)],
       },
       citizenship: {
         type: PatchType.PARAGRAPH,
-        children: [new TextRun(record.citizenship)],
+        children: [new TextRun(values.citizenship)],
       },
       nickname: {
         type: PatchType.PARAGRAPH,
-        children: [new TextRun(record.nickname)],
+        children: [new TextRun(values.nickname)],
       },
       semester: {
         type: PatchType.PARAGRAPH,
-        children: [new TextRun(`${record.semester}`)],
+        children: [new TextRun(`${values.semester}`)],
       },
       reg_no: {
         type: PatchType.PARAGRAPH,
-        children: [new TextRun(record.registration_number)],
+        children: [new TextRun(values.registration_number)],
       },
       gender: {
         type: PatchType.PARAGRAPH,
-        children: [new TextRun(record.gender)],
+        children: [new TextRun(values.gender)],
       },
       home_address: {
         type: PatchType.PARAGRAPH,
-        children: [new TextRun(record.address)],
+        children: [new TextRun(values.address)],
       },
       email: {
         type: PatchType.PARAGRAPH,
-        children: [new TextRun(record.email)],
+        children: [new TextRun(values.email)],
       },
       prev_school: {
         type: PatchType.PARAGRAPH,
-        children: [new TextRun(record.previous_school)],
+        children: [new TextRun(values.previous_school)],
       },
       phone: {
         type: PatchType.PARAGRAPH,
-        children: [new TextRun(record.phone_number)],
+        children: [new TextRun(values.phone_number)],
       },
       religion: {
         type: PatchType.PARAGRAPH,
-        children: [new TextRun(record.religion)],
+        children: [new TextRun(values.religion)],
       },
       student_status: {
         type: PatchType.PARAGRAPH,
-        children: [new TextRun(record.status)],
+        children: [new TextRun(values.status)],
       },
       academic_status: {
         type: PatchType.PARAGRAPH,
-        children: [new TextRun(record.academic_status)],
+        children: [new TextRun(values.academic_status)],
       },
       age: {
         type: PatchType.PARAGRAPH,
         children: [
           new TextRun(
             `${
-              new Date().getFullYear() - moment(record["date_of_birth"]).year()
+              new Date().getFullYear() - moment(values["date_of_birth"]).year()
             }`
           ),
         ],
@@ -126,7 +127,7 @@ export const documentPatch = async (
         type: PatchType.PARAGRAPH,
         children: [
           new TextRun(
-            `${record.place_of_birth}, ${moment(record.date_of_birth).format(
+            `${values.place_of_birth}, ${moment(values.date_of_birth).format(
               "MMMM DD, YYYY"
             )}`
           ),
@@ -164,3 +165,17 @@ const mapTheCheckbox = (list: { [key: string]: boolean }, prefix: string) =>
     })
     .mapKeys((value, key) => `${prefix}_${key}`)
     .value();
+
+function fillNullWithEmptyString(obj: any): any {
+  const result = _.cloneDeep(obj);
+
+  _.forOwn(result, (value, key) => {
+    if (_.isNull(value)) {
+      result[key] = "";
+    } else if (_.isObject(value) && !_.isArray(value)) {
+      result[key] = fillNullWithEmptyString(value);
+    }
+  });
+
+  return result;
+}

@@ -56,7 +56,9 @@ export const DocumentPrint: React.FC<{ record: StudentSchema }> = ({
       try {
         const docs = await documentPatch(documentTemplate?.value, record);
         setFileTemplate(docs);
-      } catch (err) {}
+      } catch (err) {
+        console.error(err);
+      }
     };
     run();
   }, [record, documentTemplate?.value]);
@@ -79,7 +81,7 @@ export const DocumentPrint: React.FC<{ record: StudentSchema }> = ({
   return (
     <>
       <Button
-        loading={!preview}
+        loading={!preview || !fileTemplate}
         leftIcon={<IconPrinter />}
         variant="default"
         onClick={() => {

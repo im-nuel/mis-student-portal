@@ -693,7 +693,7 @@ export const studentImportSchema: Fields<string>[] = [
     fieldType: {
       type: "input",
     },
-    alternateMatches: ["reg_date"],
+    alternateMatches: ["reg_date", "registration_date"],
   },
   {
     key: "document_approval",
