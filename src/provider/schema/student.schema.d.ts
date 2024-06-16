@@ -82,4 +82,6 @@ export interface StudentSchema {
   test_approval: boolean;
 
   account_status: "active" | "inactive" | "withdrawn" | "graduated";
+
+  profile_image_url: string;
 }

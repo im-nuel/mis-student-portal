@@ -23,22 +23,22 @@ export const DashboardPage: React.FC<IResourceComponentsProps> = () => {
               color: "gray",
             },
             {
-              title: "Early Childhood Program",
+              title: "Elementary School",
               key: "es",
               color: "red",
             },
             {
-              title: "Early Childhood Program",
+              title: "Middle School",
               key: "ms",
               color: "blue",
             },
             {
-              title: "Early Childhood Program",
+              title: "High School",
               key: "hs",
               color: "yellow",
             },
           ].map(({ title, key, color }) => (
-            <Grid.Col span={3}>
+            <Grid.Col key={key} span={3}>
               <DashboardContextConsumer>
                 {({ section }) => (
                   <StatsCard

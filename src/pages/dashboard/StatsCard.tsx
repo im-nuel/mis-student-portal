@@ -27,6 +27,7 @@ export const StatsCard: React.FC<StatsCardProps> = ({
     <Card color="blue" withBorder>
       <Flex>
         <Text
+          title={title}
           size={"sm"}
           weight={"bold"}
           c={"gray"}

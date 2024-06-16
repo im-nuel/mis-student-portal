@@ -214,7 +214,6 @@ export const MatchColumnPage: FC<{
                   fields={defaultFields}
                   fieldPick={fieldPick}
                   onFieldPick={(key, value) => {
-                    console.log(key, value);
                     setFieldPick((fields) => {
                       return [
                         ...fields.map((field) => {

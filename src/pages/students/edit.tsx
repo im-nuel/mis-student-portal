@@ -705,7 +705,7 @@ export const StudentEdit: React.FC<IResourceComponentsProps> = () => {
                 mx="xs"
                 size="xs"
                 label="Guardian Address"
-                {...getInputProps("mother_company")}
+                {...getInputProps("guardian_address")}
               />
             </Box>
             <Box>

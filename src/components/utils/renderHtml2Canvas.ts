@@ -27,9 +27,6 @@ export function renderHtmlElementToCanvas(
   canvas.width = scaledWidth;
   canvas.height = scaledHeight;
 
-
-  console.log(container, htmlElement);
-
   // Convert the HTML element to a data URL
   const svgString = `
     <svg xmlns="http://www.w3.org/2000/svg" width="${scaledWidth}" height="${scaledHeight}">

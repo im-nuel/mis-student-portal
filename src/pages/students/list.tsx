@@ -10,6 +10,8 @@ import {
   Box,
   Badge,
   LoadingOverlay,
+  ActionIcon,
+  Flex,
 } from "@mantine/core";
 import {
   EditButton,
@@ -28,6 +30,7 @@ import { ListHeader } from "../../components/page/List/ListHeader";
 import { SearchField } from "../../components/page/List/SearchField";
 import _capitalize from "lodash/capitalize";
 import { capitalizeString } from "../../components/utils/capitalized";
+import { IconFilterCancel } from "@tabler/icons-react";
 
 export const StudentList: React.FC<IResourceComponentsProps> = () => {
   const columns = React.useMemo<ColumnDef<StudentSchema>[]>(
@@ -128,8 +131,9 @@ export const StudentList: React.FC<IResourceComponentsProps> = () => {
   const {
     getHeaderGroups,
     getRowModel,
-    setOptions,
     refineCore: {
+      filters,
+      setFilters,
       setCurrent,
       pageCount,
       current,
@@ -150,12 +154,12 @@ export const StudentList: React.FC<IResourceComponentsProps> = () => {
     },
   });
 
-  setOptions((prev) => ({
-    ...prev,
-    meta: {
-      ...prev.meta,
-    },
-  }));
+  // setOptions((prev) => ({
+  //   ...prev,
+  //   meta: {
+  //     ...prev.meta,
+  //   },
+  // }));
 
   return (
     <List
@@ -165,21 +169,32 @@ export const StudentList: React.FC<IResourceComponentsProps> = () => {
       }}
       headerButtons={
         <>
-          <Box w="100%" maw={"400px"}>
+          <Flex w="100%" maw={"400px"}>
             <SearchField
               placeholder="Search Student"
               resource="students"
-              filters={
-                [
-                  // "student_id",
-                  // "last_name",
-                  // "first_name",
-                  // "middle_name",
-                  // "school_year",
-                ]
-              }
+              filters={["last_name", "first_name", "middle_name", "id"]}
+              onItemSubmit={(d) => {
+                setFilters([
+                  {
+                    field: "id",
+                    operator: "eq",
+                    value: d.data.id,
+                  },
+                ]);
+              }}
             />
-          </Box>
+            <ActionIcon
+              hidden={!(filters.length > 0)}
+              ml={"xs"}
+              size={"lg"}
+              onClick={() => {
+                setFilters([], "replace");
+              }}
+            >
+              <IconFilterCancel size={18} />
+            </ActionIcon>
+          </Flex>
           <Group spacing="sm">
             <ImportCSV />
             <CreateButton />

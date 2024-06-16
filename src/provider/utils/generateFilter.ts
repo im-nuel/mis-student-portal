@@ -1,5 +1,6 @@
 import { CrudFilters, LogicalFilter } from "@refinedev/core";
 import { mapOperator } from "./mapOperator";
+import _isEmpty from "lodash/isEmpty";
 
 // type LogicalFilter =
 //   | string
@@ -25,11 +26,17 @@ export const generateFilter = (filters?: CrudFilters) => {
         queryFilters["$or"] = filter.value.map((f) => {
           const { field, operator, value } = f as LogicalFilter;
           const mappedOperator = mapOperator(operator);
-          return {
-            [field]: {
-              [mappedOperator]: value,
-            },
-          };
+          if (_isEmpty(mappedOperator)) {
+            return {
+              [field]: value,
+            };
+          } else {
+            return {
+              [field]: {
+                [mappedOperator]: value,
+              },
+            };
+          }
         });
         return;
       }
