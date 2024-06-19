@@ -3,6 +3,8 @@ import { generateSort } from "./utils/generateSort";
 import { feathers, host } from "./client";
 import { generateFilter } from "./utils/generateFilter";
 
+const MAX_LIST_ROW = 100;
+
 export const dataProvider = (): Omit<
   Required<DataProvider>,
   "createMany" | "updateMany" | "deleteMany"

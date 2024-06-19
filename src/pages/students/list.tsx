@@ -31,6 +31,7 @@ import { SearchField } from "../../components/page/List/SearchField";
 import _capitalize from "lodash/capitalize";
 import { capitalizeString } from "../../components/utils/capitalized";
 import { IconFilterCancel } from "@tabler/icons-react";
+import { ExportCSV } from "./ExportCSV";
 
 export const StudentList: React.FC<IResourceComponentsProps> = () => {
   const columns = React.useMemo<ColumnDef<StudentSchema>[]>(
@@ -198,6 +199,7 @@ export const StudentList: React.FC<IResourceComponentsProps> = () => {
           <Group spacing="sm">
             <ImportCSV />
             <CreateButton />
+            <ExportCSV />
           </Group>
         </>
       }

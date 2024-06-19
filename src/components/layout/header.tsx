@@ -50,7 +50,7 @@ export const ThemedHeaderV2: React.FC<RefineThemedLayoutV2HeaderProps> = ({
     stickyStyles = {
       position: `sticky`,
       top: 0,
-      zIndex: 1,
+      zIndex: 199,
     };
   }
 

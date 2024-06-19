@@ -25,6 +25,7 @@ import { PicturePicker } from "../../components/page/Edit/PicturePicker";
 import { STUDENT_IMPORT_SCHEMA } from "./studentImportSchema";
 import { Input } from "@mantine/core";
 import { IconCheck, IconX } from "@tabler/icons-react";
+import { IDEditor } from "./idEditor";
 
 export const StudentShow: React.FC<IResourceComponentsProps> = () => {
   const theme = useMantineTheme();
@@ -49,6 +50,7 @@ export const StudentShow: React.FC<IResourceComponentsProps> = () => {
                 <>
                   {props.defaultButtons}
                   <DocumentPrint record={record} />
+                  <IDEditor />
                 </>
               );
             }}
