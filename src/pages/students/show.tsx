@@ -26,6 +26,7 @@ import { STUDENT_IMPORT_SCHEMA } from "./studentImportSchema";
 import { Input } from "@mantine/core";
 import { IconCheck, IconX } from "@tabler/icons-react";
 import { IDEditor } from "./idEditor";
+import { IDPreview } from "./idPreview";
 
 export const StudentShow: React.FC<IResourceComponentsProps> = () => {
   const theme = useMantineTheme();
@@ -50,7 +51,7 @@ export const StudentShow: React.FC<IResourceComponentsProps> = () => {
                 <>
                   {props.defaultButtons}
                   <DocumentPrint record={record} />
-                  <IDEditor />
+                  <IDPreview record={record} />
                 </>
               );
             }}

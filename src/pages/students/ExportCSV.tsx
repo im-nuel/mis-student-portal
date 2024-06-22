@@ -19,7 +19,7 @@ import { StudentSchema } from "../../provider/schema/student.schema";
 import { capitalizeString } from "../../components/utils/capitalized";
 
 export const ExportCSV = () => {
-  const [opened, { open, close }] = useDisclosure(true);
+  const [opened, { open, close }] = useDisclosure(false);
   const { params } = useParsed();
   const [isDownloading, { open: startDownloading, close: stopDownloading }] =
     useDisclosure(false);
