@@ -739,6 +739,28 @@ export const studentImportSchema: Fields<string>[] = [
       ],
     },
   },
+  {
+    key: "profile_image_url",
+    label: "profile_image_url",
+    example: "https://image.com/xsasdasd",
+    fieldType: {
+      type: "input",
+    },
+  },
+  {
+    key: "created_at",
+    label: "created_at",
+    fieldType: {
+      type: "input",
+    },
+  },
+  {
+    key: "updated_at",
+    label: "updated_at",
+    fieldType: {
+      type: "input",
+    },
+  },
 ];
 
 export const STUDENT_IMPORT_SCHEMA: { [key: string]: Fields<any> } =
