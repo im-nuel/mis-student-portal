@@ -12,6 +12,9 @@ import React from "react";
 import { StudentSchema } from "../../../provider/schema/student.schema";
 import { useDebouncedValue } from "@mantine/hooks";
 import { capitalizeString } from "../../utils/capitalized";
+import { normalizeText } from "../../utils/normalizeText";
+import { Highlight } from "@mantine/core";
+import _isEmpty from "lodash/isEmpty";
 
 export const SearchField: React.FC<{
   resource: string;
@@ -33,17 +36,26 @@ export const SearchField: React.FC<{
   const [filterValue] = useDebouncedValue(value, 1000);
   const { data, isLoading, isFetching, isError } = useList<StudentSchema>({
     resource,
+    pagination: {
+      pageSize: 20,
+    },
+    sorters: [
+      {
+        field: "id",
+        order: "desc",
+      },
+    ],
     filters: filterValue
       ? [
           {
-            operator: "or",
-            value: filters.map((filter) => {
-              return {
-                field: filter,
-                operator: "contains",
-                value: `%${filterValue}%`,
-              };
-            }),
+            field: "q",
+            operator: "eq",
+            value: filterValue,
+          },
+          {
+            field: "qf",
+            operator: "eq",
+            value: filters.join(","),
           },
         ]
       : [],
@@ -64,6 +76,8 @@ export const SearchField: React.FC<{
       w="100%"
       withinPortal
       placeholder={placeholder}
+      limit={20}
+      filter={() => true}
       icon={
         isLoading || isFetching || value !== filterValue ? (
           <Loader size={16} />
@@ -76,11 +90,19 @@ export const SearchField: React.FC<{
           <Flex mx="sm">
             <Box mr="sm">{data.id}</Box>
             <Box>
-              {capitalizeString(
-                `${!!data.last_name ? data.last_name + ", " : ""}${
-                  data.first_name
-                }${data.middle_name ? ` ${data.middle_name}` : ""}`
-              )}
+              <Highlight
+                highlight={normalizeText(filterValue)}
+                highlightColor=""
+                highlightStyles={{
+                  fontWeight: "bold",
+                }}
+              >
+                {capitalizeString(
+                  `${!_isEmpty(data.last_name) ? data.last_name + ", " : ""}${
+                    data.first_name
+                  }${data.middle_name ? ` ${data.middle_name}` : ""}`
+                )}
+              </Highlight>
             </Box>
           </Flex>
         </div>

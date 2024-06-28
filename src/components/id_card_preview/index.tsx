@@ -62,7 +62,7 @@ export const IDCardPreview = React.forwardRef<
                 }}
               >
                 June 20,{" "}
-                {Number(moment().get("year")) + idValidity(record.grade)}
+                {Number(moment().get("year")) + idValidity(record.grade) + 1}
               </Text>
             </Box>
             <Box pos={"absolute"} left={left} top={343}>
@@ -86,7 +86,9 @@ export const IDCardPreview = React.forwardRef<
                   whiteSpace: "nowrap",
                 }}
               >
-                {capitalizeString(`${record.first_name} ${record.middle_name}`)}
+                {capitalizeString(
+                  `${record.first_name} ${record.middle_name}`
+                ).slice(0, 27)}
               </Text>
             </Box>
             <Box pos={"absolute"} left={left} top={447}>

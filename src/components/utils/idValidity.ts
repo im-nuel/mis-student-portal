@@ -1,8 +1,8 @@
 export const idValidity = (grade: string): number => {
   // Define the mapping for grades to numerical values
   const gradeMapping: { [key: string]: number } = {
-    NSY: 0,
-    KD1: 0,
+    NSY: 1,
+    KD1: 1,
     KD2: 1,
     G1: 2,
     G2: 3,

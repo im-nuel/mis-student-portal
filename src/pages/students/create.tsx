@@ -126,6 +126,9 @@ export const StudentCreate: React.FC<IResourceComponentsProps> = () => {
       tuition_fee: "",
     },
     validate: yupResolver(SCHEMA),
+    refineCoreProps: {
+      redirect: "show",
+    },
   });
 
   const schoolYears = React.useMemo(() => {

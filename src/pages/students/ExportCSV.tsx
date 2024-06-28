@@ -17,6 +17,7 @@ import { useDataProvider, useList, useParsed } from "@refinedev/core";
 import { IconDownload, IconInfoCircle } from "@tabler/icons-react";
 import { StudentSchema } from "../../provider/schema/student.schema";
 import { capitalizeString } from "../../components/utils/capitalized";
+import { json2csv } from "json-2-csv";
 
 export const ExportCSV = () => {
   const [opened, { open, close }] = useDisclosure(false);
@@ -44,17 +45,12 @@ export const ExportCSV = () => {
       filters: params?.filters,
     });
 
-    const headers = _.keys(records.data[0]);
-    const csvRows = [
-      headers.join(","), // Header row
-      ...records.data.map((row) =>
-        headers.map((fieldName) => _.escape(row[fieldName])).join(",")
-      ),
-    ].join("\n");
+    const csv = json2csv(records.data);
+    // console.log(csv);
 
     // Create a Blob from the CSV string
-    const blob = new Blob([csvRows], { type: "text/csv" });
-
+    const blob = new Blob([csv], { type: "text/csv" });
+ 
     // Create a temporary anchor element
     const a = document.createElement("a");
     a.href = URL.createObjectURL(blob);
@@ -133,7 +129,7 @@ export const ExportCSV = () => {
         </Box>
         <Group position="apart">
           <Tooltip
-            label="Data is limited to 1000 row due to server performance."
+            label="Data is limited to 2000 row due to server performance."
             position="left"
             withArrow
             withinPortal

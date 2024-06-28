@@ -56,7 +56,7 @@ const SCHEMA = Yup.object().shape({
   previous_school: Yup.string().required(),
   program: Yup.string().required(),
   rank_in_family: Yup.string(),
-  registration_number: Yup.string().required(),
+  registration_number: Yup.string(),
   religion: Yup.string().required(),
   residence_hall_payment: Yup.string().required(),
   residence_hall_policy: Yup.boolean().required(),
@@ -123,7 +123,7 @@ export const StudentEdit: React.FC<IResourceComponentsProps> = () => {
       program: "",
       rank_in_family: "",
       register_date: "",
-      registration_number: "",
+      registration_number: "-",
       religion: "",
       residence_hall_payment: "",
       residence_hall_policy: undefined,
@@ -145,6 +145,9 @@ export const StudentEdit: React.FC<IResourceComponentsProps> = () => {
       };
     },
     validate: yupResolver(SCHEMA),
+    refineCoreProps: {
+      redirect: "show",
+    },
   });
 
   const imageUploadHandler = async (image: ImageProps) => {
