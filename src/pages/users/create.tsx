@@ -29,6 +29,8 @@ export const UserCreate = () => {
           }))}
           {...getInputProps("role")}
         />
+
+        <TextInput mt="sm" label="Password" {...getInputProps("password")} />
       </Card>
       <Card shadow="sm" withBorder mt="lg">
         <Create.Footer />

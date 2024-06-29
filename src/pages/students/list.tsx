@@ -1,5 +1,5 @@
 import React from "react";
-import { IResourceComponentsProps } from "@refinedev/core";
+import { IResourceComponentsProps, useNavigation } from "@refinedev/core";
 import { useTable } from "@refinedev/react-table";
 import { ColumnDef, flexRender } from "@tanstack/react-table";
 import {
@@ -33,7 +33,10 @@ import { capitalizeString } from "../../components/utils/capitalized";
 import { IconFilterCancel } from "@tabler/icons-react";
 import { ExportCSV } from "./ExportCSV";
 
+const SEARCH_FILTER_FIELDS = ["id", "last_name", "first_name", "middle_name"];
+
 export const StudentList: React.FC<IResourceComponentsProps> = () => {
+  const { show } = useNavigation();
   const columns = React.useMemo<ColumnDef<StudentSchema>[]>(
     () => [
       {
@@ -174,15 +177,23 @@ export const StudentList: React.FC<IResourceComponentsProps> = () => {
             <SearchField
               placeholder="Search Student"
               resource="students"
-              filters={["last_name", "first_name", "middle_name", "id"]}
-              onItemSubmit={(d) => {
+              filters={SEARCH_FILTER_FIELDS}
+              onSubmit={(value) => {
                 setFilters([
                   {
-                    field: "id",
+                    field: "q",
                     operator: "eq",
-                    value: d.data.id,
+                    value: value,
+                  },
+                  {
+                    field: "qf",
+                    operator: "eq",
+                    value: SEARCH_FILTER_FIELDS.join(","),
                   },
                 ]);
+              }}
+              onItemSubmit={(d) => {
+                show("students", d.data.id);
               }}
             />
             <ActionIcon

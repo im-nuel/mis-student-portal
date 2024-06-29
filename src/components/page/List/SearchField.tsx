@@ -21,6 +21,7 @@ export const SearchField: React.FC<{
   filters: string[];
 
   placeholder?: string;
+  onSubmit?: (value: string) => void;
   onItemSubmit: (
     item: AutocompleteItem & {
       data: StudentSchema;
@@ -30,6 +31,7 @@ export const SearchField: React.FC<{
   resource,
   filters,
   placeholder = "Search something",
+  onSubmit,
   onItemSubmit,
 }) => {
   const [value, setValue] = React.useState<string>("");
@@ -37,7 +39,7 @@ export const SearchField: React.FC<{
   const { data, isLoading, isFetching, isError } = useList<StudentSchema>({
     resource,
     pagination: {
-      pageSize: 20,
+      pageSize: 15,
     },
     sorters: [
       {
@@ -71,13 +73,24 @@ export const SearchField: React.FC<{
     );
   }, [data]);
 
+  const handleKeyUp = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      onSubmit?.(value);
+    }
+  };
+
+  const handleFilter = (value: string, item: AutocompleteItem): boolean => {
+    return true;
+  };
+
   return (
     <Autocomplete
       w="100%"
       withinPortal
       placeholder={placeholder}
       limit={20}
-      filter={() => true}
+      filter={handleFilter}
+      onKeyUp={handleKeyUp}
       icon={
         isLoading || isFetching || value !== filterValue ? (
           <Loader size={16} />
@@ -88,7 +101,17 @@ export const SearchField: React.FC<{
       itemComponent={React.forwardRef(({ label, data, ...others }, ref) => (
         <div {...others}>
           <Flex mx="sm">
-            <Box mr="sm">{data.id}</Box>
+            <Box mr="sm">
+              <Highlight
+                highlight={normalizeText(filterValue)}
+                highlightColor=""
+                highlightStyles={{
+                  fontWeight: "bold",
+                }}
+              >
+                {`${data.id}`}
+              </Highlight>
+            </Box>
             <Box>
               <Highlight
                 highlight={normalizeText(filterValue)}

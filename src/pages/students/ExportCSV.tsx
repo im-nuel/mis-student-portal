@@ -46,12 +46,8 @@ export const ExportCSV = () => {
     });
 
     const csv = json2csv(records.data);
-    // console.log(csv);
-
-    // Create a Blob from the CSV string
     const blob = new Blob([csv], { type: "text/csv" });
- 
-    // Create a temporary anchor element
+
     const a = document.createElement("a");
     a.href = URL.createObjectURL(blob);
     a.download = `Students_${records.data[0].id}-${
@@ -117,13 +113,17 @@ export const ExportCSV = () => {
                   </tr>
                 )
               )}
-              <tr>
-                <td colSpan={4} style={{ textAlign: "center" }}>
-                  +{" "}
-                  {(previewData?.total || 0) - (previewData?.data.length || 0)}{" "}
-                  more
-                </td>
-              </tr>
+              {(previewData?.total || 0) - (previewData?.data.length || 0) >
+                0 && (
+                <tr>
+                  <td colSpan={4} style={{ textAlign: "center" }}>
+                    +{" "}
+                    {(previewData?.total || 0) -
+                      (previewData?.data.length || 0)}{" "}
+                    more
+                  </td>
+                </tr>
+              )}
             </tbody>
           </Table>
         </Box>
