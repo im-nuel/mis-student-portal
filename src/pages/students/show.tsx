@@ -27,6 +27,7 @@ import { Input } from "@mantine/core";
 import { IconCheck, IconX } from "@tabler/icons-react";
 import { IDEditor } from "./idEditor";
 import { IDPreview } from "./idPreview";
+import { SECTIONING } from "./create";
 
 export const StudentShow: React.FC<IResourceComponentsProps> = () => {
   const theme = useMantineTheme();
@@ -34,6 +35,13 @@ export const StudentShow: React.FC<IResourceComponentsProps> = () => {
   const { data, isLoading } = queryResult;
 
   const record = (data?.data || {}) as StudentSchema;
+
+  const transformedValues = {
+    age:
+      new Date().getFullYear() -
+      moment(record["date_of_birth"] as string).year(),
+    section: SECTIONING[record.grade as keyof typeof SECTIONING],
+  };
 
   const getLabelFromSchema = (key: keyof StudentSchema) => {
     return STUDENT_IMPORT_SCHEMA[key].fieldType.options.find(
@@ -100,6 +108,14 @@ export const StudentShow: React.FC<IResourceComponentsProps> = () => {
               value={record.school_year}
             />
             <Box sx={{ flex: 1 }} />
+            <TextInput
+              mt="sm"
+              mx="xs"
+              size="xs"
+              label="NISN"
+              readOnly
+              value={record.nisn}
+            />
             <TextInput
               mt="sm"
               mx="xs"
@@ -664,6 +680,15 @@ export const StudentShow: React.FC<IResourceComponentsProps> = () => {
               </Box>
               <Box w="25%" />
             </Group>
+          </Card>
+          <Card shadow="sm" withBorder mt="lg">
+            <Textarea
+              mb="sm"
+              label="Note"
+              size="xs"
+              autosize
+              value={record.note}
+            />
           </Card>
         </Box>
         <Show.Footer />

@@ -84,4 +84,5 @@ export interface StudentSchema {
   account_status: "active" | "inactive" | "withdrawn" | "graduated";
 
   profile_image_url: string;
+  note: string;
 }

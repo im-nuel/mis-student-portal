@@ -14,6 +14,7 @@ import {
   Textarea,
   Space,
   Container,
+  useMantineTheme,
 } from "@mantine/core";
 import { STUDENT_IMPORT_SCHEMA } from "./studentImportSchema";
 import { DatePicker } from "@mantine/dates";
@@ -24,6 +25,24 @@ import _reverse from "lodash/reverse";
 import React from "react";
 import * as Yup from "yup";
 import { yupResolver } from "@mantine/form";
+
+export const SECTIONING = {
+  NSY: "ECP",
+  KD1: "ECP",
+  KD2: "ECP",
+  G1: "ES",
+  G2: "ES",
+  G3: "ES",
+  G4: "ES",
+  G5: "ES",
+  G6: "ES",
+  G7: "MS",
+  G8: "MS",
+  G9: "MS",
+  G10: "HS",
+  G11: "HS",
+  G12: "HS",
+};
 
 const SCHEMA = Yup.object().shape({
   academic_status: Yup.string().required(),
@@ -60,6 +79,15 @@ const SCHEMA = Yup.object().shape({
 });
 
 export const StudentCreate: React.FC<IResourceComponentsProps> = () => {
+  const theme = useMantineTheme();
+
+  const SECTION_COLOR_THEME = {
+    ECP: theme.colors.red[1],
+    ES: theme.colors.red[2],
+    MS: theme.colors.blue[2],
+    HS: theme.colors.yellow[2],
+  };
+
   const {
     getInputProps,
     saveButtonProps,
@@ -124,12 +152,21 @@ export const StudentCreate: React.FC<IResourceComponentsProps> = () => {
       transportation_policy: false,
       transportation: "",
       tuition_fee: "",
+
+      note: "",
     },
     validate: yupResolver(SCHEMA),
     refineCoreProps: {
       redirect: "show",
     },
   });
+
+  const transformedValues = {
+    age:
+      new Date().getFullYear() -
+      moment(values["date_of_birth"] as string).year(),
+    section: SECTIONING[values.grade as keyof typeof SECTIONING],
+  };
 
   const schoolYears = React.useMemo(() => {
     const arr = [...STUDENT_IMPORT_SCHEMA["school_year"].fieldType.options];
@@ -138,7 +175,16 @@ export const StudentCreate: React.FC<IResourceComponentsProps> = () => {
 
   return (
     <Create isLoading={formLoading} saveButtonProps={saveButtonProps}>
-      <Container>
+      <Container
+        sx={{
+          ".mantine-Paper-root": {
+            borderColor:
+              SECTION_COLOR_THEME[
+                transformedValues.section as keyof typeof SECTION_COLOR_THEME
+              ],
+          },
+        }}
+      >
         <Card mb="sm">
           <Create.Header />
           {JSON.stringify(errors)}
@@ -168,6 +214,13 @@ export const StudentCreate: React.FC<IResourceComponentsProps> = () => {
               {...getInputProps("school_year")}
             />
             <Box sx={{ flex: 1 }} />
+            <TextInput
+              mt="sm"
+              mx="xs"
+              size="xs"
+              label="NISN"
+              {...getInputProps("nisn")}
+            />
             <TextInput
               mt="sm"
               mx="xs"
@@ -271,10 +324,7 @@ export const StudentCreate: React.FC<IResourceComponentsProps> = () => {
               variant="unstyled"
               readOnly
               {...getInputProps("age")}
-              value={
-                new Date().getFullYear() -
-                moment(values["date_of_birth"] as string).year()
-              }
+              value={transformedValues.age}
             />
           </Flex>
           <Flex mx="-xs">
@@ -357,7 +407,7 @@ export const StudentCreate: React.FC<IResourceComponentsProps> = () => {
           </Flex>
         </Card>
 
-        <Card shadow="sm" withBorder mt="lg">
+        <Card shadow="sm" withBorder mt="lg" color="red">
           <Title order={4} align="center">
             Program
           </Title>
@@ -367,18 +417,20 @@ export const StudentCreate: React.FC<IResourceComponentsProps> = () => {
               mx="xs"
               size="xs"
               withinPortal
-              label="Section"
-              {...getInputProps("section")}
-              data={STUDENT_IMPORT_SCHEMA["section"].fieldType.options}
+              label="Grade"
+              {...getInputProps("grade")}
+              data={STUDENT_IMPORT_SCHEMA["grade"].fieldType.options}
             />
             <Select
               mt="sm"
               mx="xs"
               size="xs"
               withinPortal
-              label="Grade"
-              {...getInputProps("grade")}
-              data={STUDENT_IMPORT_SCHEMA["grade"].fieldType.options}
+              readOnly={true}
+              label="Section"
+              {...getInputProps("section")}
+              data={STUDENT_IMPORT_SCHEMA["section"].fieldType.options}
+              value={transformedValues.section}
             />
           </Group>
           <Group mx="-xs" grow spacing={0}>
@@ -685,8 +737,14 @@ export const StudentCreate: React.FC<IResourceComponentsProps> = () => {
           </Group>
         </Card>
         {/* <TextInput mt="sm" label="Nisn" {...getInputProps("nisn")} /> */}
-        {/* <TextInput mt="sm" label="Asother" {...getInputProps("asother")} /> */}
         <Card mt="lg">
+          <Textarea
+            mb="sm"
+            label="Note"
+            size="xs"
+            autosize
+            {...getInputProps("note")}
+          />
           <Create.Footer />
         </Card>
         <Space h={"25vh"} />

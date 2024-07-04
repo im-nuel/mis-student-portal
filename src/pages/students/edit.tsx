@@ -35,6 +35,8 @@ import { Edit } from "../../components/page/Edit";
 import { EditHeader } from "../../components/page/Edit/EditHeader";
 import { EditFooter } from "../../components/page/Edit/EditFooter";
 import { DeveloperInspect } from "../../components/dev_inspect";
+import { SECTIONING } from "./create";
+import { StudentSchema } from "../../provider/schema/student.schema";
 
 const SCHEMA = Yup.object().shape({
   academic_status: Yup.string().required(),
@@ -72,6 +74,14 @@ const SCHEMA = Yup.object().shape({
 
 export const StudentEdit: React.FC<IResourceComponentsProps> = () => {
   const theme = useMantineTheme();
+
+  const SECTION_COLOR_THEME = {
+    ECP: theme.colors.orange[1],
+    ES: theme.colors.orange[2],
+    MS: theme.colors.blue[2],
+    HS: theme.colors.yellow[2],
+  };
+
   const {
     getInputProps,
     saveButtonProps,
@@ -79,7 +89,7 @@ export const StudentEdit: React.FC<IResourceComponentsProps> = () => {
     refineCore: { formLoading },
     values,
     errors,
-  } = useForm({
+  } = useForm<StudentSchema>({
     initialValues: {
       id: undefined,
       academic_status: "",
@@ -141,7 +151,7 @@ export const StudentEdit: React.FC<IResourceComponentsProps> = () => {
     transformValues: (values) => {
       return {
         ...values,
-        date_of_birth: moment(values.date_of_birth).toISOString(true),
+        date_of_birth: moment(values.date_of_birth as string).toISOString(true),
       };
     },
     validate: yupResolver(SCHEMA),
@@ -149,6 +159,13 @@ export const StudentEdit: React.FC<IResourceComponentsProps> = () => {
       redirect: "show",
     },
   });
+
+  const transformedValues = {
+    age:
+      new Date().getFullYear() -
+      moment(values["date_of_birth"] as string).year(),
+    section: SECTIONING[values.grade as keyof typeof SECTIONING],
+  };
 
   const imageUploadHandler = async (image: ImageProps) => {
     const filename = `${generateId()}.jpg`;
@@ -168,13 +185,22 @@ export const StudentEdit: React.FC<IResourceComponentsProps> = () => {
 
   return (
     <Edit isLoading={formLoading} saveButtonProps={saveButtonProps}>
-      <Container>
+      <Container
+        sx={{
+          ".mantine-Paper-root": {
+            borderColor:
+              SECTION_COLOR_THEME[
+                transformedValues.section as keyof typeof SECTION_COLOR_THEME
+              ],
+          },
+        }}
+      >
         <Card withBorder>
           <Edit.Header />
           <Group mt="lg">
             <AspectRatio ratio={4 / 6} sx={{ maxWidth: 100, width: "100%" }}>
               <PicturePicker
-                previewImage={values.profile_image_url}
+                previewImage={values.profile_image_url as string}
                 onSubmit={imageUploadHandler}
               />
             </AspectRatio>
@@ -215,6 +241,13 @@ export const StudentEdit: React.FC<IResourceComponentsProps> = () => {
               {...getInputProps("school_year")}
             />
             <Box sx={{ flex: 1 }} />
+            <TextInput
+              mt="sm"
+              mx="xs"
+              size="xs"
+              label="NISN"
+              {...getInputProps("nisn")}
+            />
             <TextInput
               mt="sm"
               mx="xs"
@@ -306,7 +339,7 @@ export const StudentEdit: React.FC<IResourceComponentsProps> = () => {
                 withinPortal
                 label="Date Of Birth"
                 {...getInputProps("date_of_birth")}
-                value={moment(values.date_of_birth).toDate()}
+                value={moment(values.date_of_birth as string).toDate()}
               />
             </Group>
             <TextInput
@@ -318,10 +351,7 @@ export const StudentEdit: React.FC<IResourceComponentsProps> = () => {
               variant="unstyled"
               readOnly
               {...getInputProps("age")}
-              value={
-                new Date().getFullYear() -
-                moment(values["date_of_birth"]).year()
-              }
+              value={transformedValues.age}
             />
           </Flex>
           <Flex mx="-xs">
@@ -416,6 +446,7 @@ export const StudentEdit: React.FC<IResourceComponentsProps> = () => {
               label="Section"
               {...getInputProps("section")}
               data={STUDENT_IMPORT_SCHEMA["section"].fieldType.options}
+              value={transformedValues.section}
             />
             <Select
               mt="sm"
@@ -524,7 +555,7 @@ export const StudentEdit: React.FC<IResourceComponentsProps> = () => {
                   )
                 }
                 {...getInputProps("transportation_policy")}
-                checked={values["transportation_policy"]}
+                checked={values["transportation_policy"] as boolean}
               />
             </Box>
           </Flex>
@@ -569,7 +600,7 @@ export const StudentEdit: React.FC<IResourceComponentsProps> = () => {
                 }
                 {...getInputProps("residence_hall_policy")}
                 // checked={values["residence_hall_policy"]}
-                checked={values["residence_hall_policy"]}
+                checked={values["residence_hall_policy"] as boolean}
               />
             </Box>
           </Flex>
@@ -761,7 +792,7 @@ export const StudentEdit: React.FC<IResourceComponentsProps> = () => {
                     )
                   }
                   {...getInputProps("finance_policy")}
-                  checked={values["finance_policy"]}
+                  checked={values["finance_policy"] as boolean}
                 />
               </Box>
             </Box>
@@ -788,6 +819,13 @@ export const StudentEdit: React.FC<IResourceComponentsProps> = () => {
         <Card withBorder mt="lg">
           <DeveloperInspect
             value={Object.keys(errors).length > 0 && JSON.stringify(errors)}
+          />
+          <Textarea
+            mb="sm"
+            label="Note"
+            size="xs"
+            autosize
+            {...getInputProps("note")}
           />
           <Edit.Footer />
         </Card>
