@@ -52,6 +52,7 @@ export const StudentList: React.FC<IResourceComponentsProps> = () => {
         accessorKey: "first_name",
         header: "Name",
         enableSorting: false,
+        enableColumnFilter: false,
         cell: function render({ row }) {
           const student = row.original;
           const value = capitalizeString(
@@ -235,6 +236,7 @@ export const StudentList: React.FC<IResourceComponentsProps> = () => {
                           </Box>
                           <Group spacing="xs" noWrap>
                             <ColumnSorter column={header.column} />
+                            <ColumnFilter column={header.column} />
                           </Group>
                         </Group>
                       )}
