@@ -33,7 +33,7 @@ export const DocumentPrint: React.FC<{ record: StudentSchema }> = ({
           }
       }
     `,
-    srcdoc: " ",
+    // srcdoc: " ",
   });
 
   const siteConfigRes = useList<SiteConfigSchema>({
