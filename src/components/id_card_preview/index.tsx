@@ -62,7 +62,7 @@ export const IDCardPreview = React.forwardRef<
                 }}
               >
                 June 20,{" "}
-                {Number(moment().get("year")) + idValidity(record.grade) + 1}
+                {Number(moment().get("year")) + idValidity(record.grade)}
               </Text>
             </Box>
             <Box pos={"absolute"} left={left} top={343}>
@@ -100,7 +100,7 @@ export const IDCardPreview = React.forwardRef<
                   color,
                 }}
               >
-                {record.id}
+                {record.nisn && record.nisn !== "NULL" ? `${record.nisn}/${record.id}` : record.id}
               </Text>
             </Box>
             <Box pos={"absolute"} left={left} top={503}>

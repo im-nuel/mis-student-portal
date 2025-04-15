@@ -29,12 +29,17 @@ export const IDPreview: React.FC<{ record: StudentSchema }> = ({ record }) => {
 
   const handleDownload = () => {
     if (!refCanvas.current) return;
-    toJpeg(refCanvas.current, { cacheBust: true }).then((dataUrl) => {
+  
+    toJpeg(refCanvas.current, {
+      cacheBust: true,
+      quality: 1,
+      pixelRatio: 2, // atau 3 untuk hasil yang lebih besar
+    }).then((dataUrl) => {
       const link = document.createElement("a");
       link.download = `${capitalizeString(
-        `${!!record.last_name ? record.last_name + ", " : ""}${
-          record.first_name
-        }${record.middle_name ? ` ${record.middle_name}` : ""}`
+        `${record.last_name ? record.last_name + ", " : ""}${record.first_name}${
+          record.middle_name ? ` ${record.middle_name}` : ""
+        }`
       )}.png`;
       link.href = dataUrl;
       link.click();
