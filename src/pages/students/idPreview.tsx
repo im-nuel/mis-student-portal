@@ -44,7 +44,7 @@ export const IDPreview: React.FC<{ record: StudentSchema }> = ({ record }) => {
       link.href = dataUrl;
       link.click();
     });
-  };
+  };  
 
   return (
     <>
