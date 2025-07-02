@@ -67,7 +67,7 @@ export const DocumentPreview = ({ student }: { student: StudentSchema }) => {
           }
       }
     `,
-    srcdoc: " ",
+    // srcdoc: " ",
   });
 
   const [fileTemplate, setFileTemplate] = React.useState<Blob | null>(null);
