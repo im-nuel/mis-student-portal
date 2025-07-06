@@ -56,6 +56,29 @@ const allLogbookColumns: Record<string, ColumnDef<StudentSchema>> = {
     enableColumnFilter: false,
     cell: () => null, // will render manually using getRowModel().rows
   },
+  photo: {
+    id: "photo",
+    header: "Photo",
+    accessorKey: "profile_image_url",
+    enableSorting: false,
+    enableColumnFilter: false,
+    cell: ({ getValue }) => {
+      const url = getValue<string>();
+      return (
+        <Box
+          component="img"
+          src={url}
+          alt="Student Photo"
+          width={40}
+          height={40}
+          style={{ borderRadius: 6, objectFit: "cover" }}
+          // onError={(e) => {
+          //   (e.target as HTMLImageElement).src = "/default-avatar.png";
+          // }}
+        />
+      );
+    },
+  },
   id: {
     id: "id",
     accessorKey: "id",
@@ -198,6 +221,7 @@ export const LogbookList: React.FC<IResourceComponentsProps> = () => {
 
   const [columnOrder, setColumnOrder] = React.useState<string[]>([
     "no",
+    "photo",
     "id",
     "student_name",
     "grade",
@@ -206,6 +230,7 @@ export const LogbookList: React.FC<IResourceComponentsProps> = () => {
   ]);
   const [visibleColumnKeys, setVisibleColumnKeys] = React.useState<string[]>([
     "no",
+    "photo",
     "id",
     "student_name",
     "grade",
