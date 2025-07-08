@@ -66,20 +66,21 @@ export const IDCardPreview = React.forwardRef<
               </Text>
             </Box>
             <Box pos={"absolute"} left={left} top={343}>
+              {record.last_name?.trim() && (
+                <Text
+                  sx={{
+                    lineHeight: 1,
+                    fontSize: 41,
+                    fontFamily: "Poppins",
+                    color,
+                  }}
+                >
+                  {capitalizeString(record.last_name.trim())},
+                </Text>
+              )}
               <Text
                 sx={{
-                  lineHeight: 1,
-                  fontSize: 41,
-                  fontFamily: "Poppins",
-                  color,
-                  opacity: record.last_name ? 1 : 0,
-                }}
-              >
-                {capitalizeString(record.last_name)},
-              </Text>
-              <Text
-                sx={{
-                  lineHeight: 1,
+                  lineHeight: record.last_name?.trim() ? 1 : 4,
                   fontSize: 24,
                   fontFamily: "Poppins",
                   color,
@@ -87,7 +88,7 @@ export const IDCardPreview = React.forwardRef<
                 }}
               >
                 {capitalizeString(
-                  `${record.first_name} ${record.middle_name}`
+                  `${record.first_name} ${record.middle_name || ""}`
                 ).slice(0, 27)}
               </Text>
             </Box>
