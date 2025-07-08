@@ -48,6 +48,40 @@ export const StudentList: React.FC<IResourceComponentsProps> = () => {
         },
       },
       {
+        id: "photo",
+        accessorKey: "profile_image_url",
+        header: "Photo",
+        enableSorting: false,
+        enableColumnFilter: false,
+        cell: function render({ getValue }) {
+          const url = getValue<string>();
+          return url ? (
+            <Box
+              component="img"
+              src={url}
+              alt="student"
+              width={40}
+              height={40}
+              sx={{
+                objectFit: "cover",
+                borderRadius: 4,
+                border: "1px solid #ccc",
+              }}
+            />
+          ) : (
+            <Box
+              w={40}
+              h={40}
+              sx={{
+                backgroundColor: "#f0f0f0",
+                borderRadius: 4,
+                border: "1px solid #ccc",
+              }}
+            />
+          );
+        },
+      },
+      {
         id: "student_name",
         accessorKey: "first_name",
         header: "Name",
