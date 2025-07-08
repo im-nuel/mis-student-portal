@@ -14,6 +14,7 @@ import {
   Card,
   Flex,
   Text,
+  Button,
 } from "@mantine/core";
 import { TextField } from "@refinedev/mantine";
 import { StudentSchema } from "../../provider/schema/student.schema";
@@ -516,34 +517,53 @@ export const LogbookList: React.FC<IResourceComponentsProps> = () => {
 
       <Card withBorder radius="md" mt="md" mb="md" p="md">
         <Text size="sm" weight={500} mb="xs">
-          Select & Reorder Columns:
+            Select & Reorder Columns:
         </Text>
         <DndContext
-          sensors={sensors}
-          collisionDetection={closestCenter}
-          onDragEnd={handleDragEnd}
+            sensors={sensors}
+            collisionDetection={closestCenter}
+            onDragEnd={handleDragEnd}
         >
-          <SortableContext items={columnOrder} strategy={rectSortingStrategy}>
-            <Flex wrap="wrap" gap="sm">
-              {columnOrder.map((key) => (
-                <SortableItem
-                  key={key}
-                  id={key}
-                  label={allLogbookColumns[key].header as string}
-                  checked={visibleColumnKeys.includes(key)}
-                  onToggle={() => {
-                    setVisibleColumnKeys((prev) =>
-                      prev.includes(key)
-                        ? prev.filter((k) => k !== key)
-                        : [...prev, key]
-                    );
-                  }}
-                />
-              ))}
-            </Flex>
-          </SortableContext>
+            <SortableContext items={columnOrder} strategy={rectSortingStrategy}>
+                <Flex wrap="wrap" gap="sm">
+                    {columnOrder.map((key) => (
+                        <SortableItem
+                            key={key}
+                            id={key}
+                            label={allLogbookColumns[key].header as string}
+                            checked={visibleColumnKeys.includes(key)}
+                            onToggle={() => {
+                                setVisibleColumnKeys((prev) =>
+                                    prev.includes(key)
+                                        ? prev.filter((k) => k !== key)
+                                        : [...prev, key]
+                                );
+                            }}
+                        />
+                    ))}
+                </Flex>
+            </SortableContext>
         </DndContext>
-      </Card>
+
+        {/* Select / Unselect All */}
+        <Group mt="sm">
+            <Button
+                size="xs"
+                variant="light"
+                onClick={() => setVisibleColumnKeys([...columnOrder])}
+            >
+                Select All
+            </Button>
+            <Button
+                size="xs"
+                variant="light"
+                color="red"
+                onClick={() => setVisibleColumnKeys([])}
+            >
+                Unselect All
+            </Button>
+        </Group>
+    </Card>
 
       <ScrollArea mt="lg" pos="relative">
         <LoadingOverlay visible={isFetching} />

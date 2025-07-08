@@ -23,21 +23,34 @@ import { STUDENT_IMPORT_SCHEMA } from "../students/studentImportSchema";
 
 (pdfMake as any).vfs = (pdfFonts as any).vfs;
 
-const getBase64FromUrl = async (url: string): Promise<string | null> => {
-    try {
-        const response = await fetch(url);
-        const blob = await response.blob();
-
-        return await new Promise((resolve, reject) => {
-            const reader = new FileReader();
-            reader.onloadend = () => resolve(reader.result as string);
-            reader.onerror = reject;
-            reader.readAsDataURL(blob);
-        });
-    } catch (error) {
-        console.error("Failed to load image", url, error);
-        return null;
-    }
+const cropImageToTopSquare = async (url: string, size = 5000): Promise<string | null> => {
+    return new Promise((resolve, reject) => {
+        const img = new Image();
+        img.crossOrigin = "anonymous";
+        img.onload = () => {
+            const minDim = Math.min(img.width, img.height);
+            const cropSize = Math.min(minDim, size);
+            const canvas = document.createElement("canvas");
+            canvas.width = cropSize;
+            canvas.height = cropSize;
+            const ctx = canvas.getContext("2d");
+            if (!ctx) return reject("Canvas context not available");
+            ctx.drawImage(
+                img,
+                (img.width - cropSize) / 2,
+                0,
+                cropSize,
+                cropSize,
+                0,
+                0,
+                cropSize,
+                cropSize
+            );
+            resolve(canvas.toDataURL("image/jpeg"));
+        };
+        img.onerror = reject;
+        img.src = url;
+    });
 };
 
 const getLabelFromSchema = (key: keyof StudentSchema, value: string) => {
@@ -77,6 +90,7 @@ export const ExportPDF: React.FC<ExportPDFProps> = ({
 
     const [isDownloading, setIsDownloading] = React.useState(false);
     const [paperSize, setPaperSize] = React.useState<"A4" | "F4">("F4");
+    const [orientation, setOrientation] = React.useState<"landscape" | "portrait">("landscape");
 
     const excludeColumns: string[] = [];
 
@@ -150,14 +164,13 @@ export const ExportPDF: React.FC<ExportPDFProps> = ({
                 } else if (key === "photo") {
                     if (typeof value === "string" && value.startsWith("http")) {
                         try {
-                            const base64: string | null = await getBase64FromUrl(value);
-                            if (base64 && base64.startsWith("data:image")) {
-                                rowData.push({ image: base64, fit: [25, 25] });
+                            const croppedBase64 = await cropImageToTopSquare(value, 5000);
+                            if (croppedBase64) {
+                                rowData.push({ image: croppedBase64, width: 25, height: 25 });
                             } else {
                                 rowData.push("");
                             }
-                        } catch (error) {
-                            console.warn("Failed to fetch or convert image", value, error);
+                        } catch {
                             rowData.push("");
                         }
                     } else {
@@ -180,7 +193,7 @@ export const ExportPDF: React.FC<ExportPDFProps> = ({
             pageSize: paperSize === "A4"
                 ? "A4"
                 : { width: mmToPt(210), height: mmToPt(330) },
-            pageOrientation: "landscape" as const,
+            pageOrientation: orientation,
             content: [
                 {
                 columns: [
@@ -312,6 +325,16 @@ export const ExportPDF: React.FC<ExportPDFProps> = ({
                         data={[
                             { value: "A4", label: "A4 (210×297mm)" },
                             { value: "F4", label: "F4 (210×330mm)" },
+                        ]}
+                        style={{ maxWidth: 200 }}
+                    />
+                    <Select
+                        label="Orientation"
+                        value={orientation}
+                        onChange={(val) => setOrientation(val as "portrait" | "landscape")}
+                        data={[
+                            { value: "portrait", label: "Portrait" },
+                            { value: "landscape", label: "Landscape" },
                         ]}
                         style={{ maxWidth: 200 }}
                     />
