@@ -1,6 +1,6 @@
 import { Button } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
-import { IconUpload } from "@tabler/icons-react";
+import { IconDownload, IconInfoCircle } from "@tabler/icons-react";
 import { useCallback } from "react";
 import { ReactSpreadsheetImport } from "react-spreadsheet-import";
 import { studentImportSchema } from "./studentImportSchema";
@@ -21,7 +21,7 @@ export const ImportCSV = () => {
 
   return (
     <>
-      <Button leftIcon={<IconUpload size={16} />} onClick={open}>
+      <Button leftIcon={<IconDownload size={16} />} onClick={open}>
         Import CSV
       </Button>
       {opened && (

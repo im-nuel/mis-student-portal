@@ -1,5 +1,5 @@
 import React from "react";
-import { IResourceComponentsProps } from "@refinedev/core";
+import { IResourceComponentsProps, LogicalFilter } from "@refinedev/core";
 import { useTable } from "@refinedev/react-table";
 import { ColumnDef, flexRender } from "@tanstack/react-table";
 import {
@@ -39,6 +39,9 @@ import {
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { IconGripVertical } from "@tabler/icons-react";
+import dayjs from "dayjs";
+import { STUDENT_IMPORT_SCHEMA } from "../students/studentImportSchema";
+import { ExportPDF } from "./ExportPDF";
 
 // --- Custom sort order for grade ---
 const gradeOrder = [
@@ -46,6 +49,19 @@ const gradeOrder = [
   "G1", "G2", "G3", "G4", "G5", "G6",
   "G7", "G8", "G9", "G10", "G11", "G12",
 ];
+
+// --- Custom sort order for grade ---
+const sectionOrder = [
+  "ECP", "ES", "MS", "HS",
+];
+
+const getLabelFromSchema = (key: keyof StudentSchema, value: string) => {
+  return (
+    STUDENT_IMPORT_SCHEMA[key]?.fieldType?.options?.find(
+      (i: any) => i.value === value
+    )?.label || value
+  );
+};
 
 // All available columns
 const allLogbookColumns: Record<string, ColumnDef<StudentSchema>> = {
@@ -69,8 +85,8 @@ const allLogbookColumns: Record<string, ColumnDef<StudentSchema>> = {
           component="img"
           src={url}
           alt="Student Photo"
-          width={40}
-          height={40}
+          width={50}
+          height={50}
           style={{ borderRadius: 6, objectFit: "cover" }}
           // onError={(e) => {
           //   (e.target as HTMLImageElement).src = "/default-avatar.png";
@@ -163,6 +179,19 @@ const allLogbookColumns: Record<string, ColumnDef<StudentSchema>> = {
 
       return <Badge color={color}>{label}</Badge>;
     },
+    sortingFn: (rowA, rowB) => {
+      const a = rowA.getValue("section") as string;
+      const b = rowB.getValue("section") as string;
+      const indexA = sectionOrder.indexOf(a);
+      const indexB = sectionOrder.indexOf(b);
+
+      if (indexA === -1 && indexB === -1) {
+        return String(a).localeCompare(String(b));
+      }
+      if (indexA === -1) return 1;
+      if (indexB === -1) return -1;
+      return indexA - indexB;
+    },
   },
   school_year: {
     id: "school_year",
@@ -175,6 +204,134 @@ const allLogbookColumns: Record<string, ColumnDef<StudentSchema>> = {
         {getValue<any>()}
       </Badge>
     ),
+  },
+  gender: {
+    id: "gender",
+    accessorKey: "gender",
+    header: "Gender",
+    enableSorting: true,
+    enableColumnFilter: true,
+    cell: ({ getValue }) => {
+      const value = getValue<string>();
+      const label = getLabelFromSchema("gender", value);
+      return <TextField value={label} />;
+    },
+  },
+  register_date: {
+    id: "register_date",
+    accessorKey: "register_date",
+    header: "Date Enrolled",
+    cell: ({ getValue }) => {
+      const date = getValue<string>();
+      return <TextField value={dayjs(date).format("DD MMM YYYY")} />;
+    },
+  },
+  transportation: {
+    id: "transportation",
+    accessorKey: "transportation",
+    header: "Transportation",
+    enableSorting: true,
+    enableColumnFilter: true,
+    cell: ({ getValue }) => {
+      const value = getValue<string>();
+      const label = getLabelFromSchema("transportation", value);
+      return <TextField value={label} />;
+    },
+  },
+  nisn: {
+    id: "nisn",
+    accessorKey: "nisn",
+    header: "NISN",
+  },
+  rank_in_family: {
+    id: "rank_in_family",
+    accessorKey: "rank_in_family",
+    header: "Rank in Family",
+  },
+  place_dob: {
+    id: "place_dob",
+    header: "Place, DOB",
+    accessorFn: (row) => row,
+    cell: ({ getValue }) => {
+      const row = getValue<StudentSchema>();
+      const place = row.place_of_birth?.trim() || "-";
+      const date = row.date_of_birth
+        ? dayjs(row.date_of_birth).isValid()
+          ? dayjs(row.date_of_birth).format("DD MMM YYYY")
+          : "-"
+        : "-";
+
+      return <TextField value={`${place}, ${date}`} />;
+    },
+    enableSorting: false,
+    enableColumnFilter: false,
+  },
+  age: {
+    id: "age",
+    accessorKey: "age",
+    header: "Age",
+  },
+  religion: {
+    id: "religion",
+    accessorKey: "religion",
+    header: "Religion",
+    enableSorting: true,
+    enableColumnFilter: true,
+    cell: ({ getValue }) => {
+      const value = getValue<string>();
+      const label = getLabelFromSchema("religion", value);
+      return <TextField value={label} />;
+    },
+  },
+  citizenship: {
+    id: "citizenship",
+    accessorKey: "citizenship",
+    header: "Citizenship",
+  },
+  address: {
+    id: "address",
+    accessorKey: "address",
+    header: "Address",
+  },
+  phone_number: {
+    id: "phone_number",
+    accessorKey: "phone_number",
+    header: "Phone",
+  },
+  father_name: {
+    id: "father_name",
+    accessorKey: "father_name",
+    header: "Father Name",
+  },
+  father_occupation: {
+    id: "father_occupation",
+    accessorKey: "father_occupation",
+    header: "Father Occupation",
+  },
+  father_phone_number: {
+    id: "father_phone_number",
+    accessorKey: "father_phone_number",
+    header: "Father Phone",
+  },
+  mother_name: {
+    id: "mother_name",
+    accessorKey: "mother_name",
+    header: "Mother Name",
+  },
+  mother_occupation: {
+    id: "mother_occupation",
+    accessorKey: "mother_occupation",
+    header: "Mother Occupation",
+  },
+  mother_phone_number: {
+    id: "mother_phone_number",
+    accessorKey: "mother_phone_number",
+    header: "Mother Phone",
+  },
+  family_card_number: {
+    id: "family_card_number",
+    accessorKey: "family_card_number",
+    header: "Family Card No.",
   },
 };
 
@@ -227,6 +384,24 @@ export const LogbookList: React.FC<IResourceComponentsProps> = () => {
     "grade",
     "section",
     "school_year",
+    "gender",
+    "register_date",
+    "transportation",
+    "nisn",
+    "rank_in_family",
+    "place_dob",
+    "age",
+    "religion",
+    "citizenship",
+    "address",
+    "phone_number",
+    "father_name",
+    "father_occupation",
+    "father_phone_number",
+    "mother_name",
+    "mother_occupation",
+    "mother_phone_number",
+    "family_card_number",
   ]);
   const [visibleColumnKeys, setVisibleColumnKeys] = React.useState<string[]>([
     "no",
@@ -236,6 +411,24 @@ export const LogbookList: React.FC<IResourceComponentsProps> = () => {
     "grade",
     "section",
     "school_year",
+    "gender",
+    "register_date",
+    "transportation",
+    "nisn",
+    "rank_in_family",
+    "place_dob",
+    "age",
+    "religion",
+    "citizenship",
+    "address",
+    "phone_number",
+    "father_name",
+    "father_occupation",
+    "father_phone_number",
+    "mother_name",
+    "mother_occupation",
+    "mother_phone_number",
+    "family_card_number",
   ]);
 
   const columns = React.useMemo<ColumnDef<StudentSchema>[]>(() => {
@@ -251,6 +444,7 @@ export const LogbookList: React.FC<IResourceComponentsProps> = () => {
     getRowModel,
     refineCore: {
       tableQueryResult: { isFetching },
+      filters,
     },
   } = useTable({
     refineCoreProps: {
@@ -282,6 +476,14 @@ export const LogbookList: React.FC<IResourceComponentsProps> = () => {
     columns,
   });
 
+  const isLogicalFilter = (f: any): f is LogicalFilter => {
+    return f && typeof f === "object" && "field" in f && "operator" in f && "value" in f;
+  };
+
+  const gradeFilter = (filters.find((f) => isLogicalFilter(f) && f.field === "grade") as LogicalFilter | undefined)?.value;
+  const sectionFilter = (filters.find((f) => isLogicalFilter(f) && f.field === "section") as LogicalFilter | undefined)?.value;
+  const schoolYearFilter = (filters.find((f) => isLogicalFilter(f) && f.field === "school_year") as LogicalFilter | undefined)?.value;
+
   const sensors = useSensors(
     useSensor(PointerSensor),
     useSensor(KeyboardSensor)
@@ -299,6 +501,18 @@ export const LogbookList: React.FC<IResourceComponentsProps> = () => {
   return (
     <List>
       <ListHeader />
+      
+      <Group spacing="sm" mt="md">
+        <ExportPDF
+          rows={getRowModel().rows}
+          columnOrder={columnOrder}
+          visibleColumnKeys={visibleColumnKeys}
+          allLogbookColumns={allLogbookColumns}
+          gradeFilter={gradeFilter}
+          sectionFilter={sectionFilter}
+          schoolYearFilter={schoolYearFilter}
+        />
+      </Group>
 
       <Card withBorder radius="md" mt="md" mb="md" p="md">
         <Text size="sm" weight={500} mb="xs">

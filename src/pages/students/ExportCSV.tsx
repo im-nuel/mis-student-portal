@@ -14,7 +14,7 @@ import {
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { useDataProvider, useList, useParsed } from "@refinedev/core";
-import { IconDownload, IconInfoCircle } from "@tabler/icons-react";
+import { IconUpload, IconInfoCircle } from "@tabler/icons-react";
 import { StudentSchema } from "../../provider/schema/student.schema";
 import { capitalizeString } from "../../components/utils/capitalized";
 import { json2csv } from "json-2-csv";
@@ -62,7 +62,7 @@ export const ExportCSV = () => {
 
   return (
     <>
-      <Button leftIcon={<IconDownload size={16} />} onClick={open}>
+      <Button leftIcon={<IconUpload size={16} />} onClick={open}>
         Export CSV
       </Button>
       <Modal
