@@ -3,6 +3,7 @@ import { useList } from "@refinedev/core";
 import { IconArrowUpRight } from "@tabler/icons-react";
 import React from "react";
 import { useDashboardContext } from "./context";
+import { getActiveSchoolYear } from "../../components/utils/getActiveSchoolYear";
 
 type StatsSegmentProps = {
   label: string;
@@ -33,7 +34,9 @@ export const StatsSegment: React.FC<StatsSegmentProps> = ({ label, icon }) => {
               <IconArrowUpRight size={16} />
             </Text>
           </Group>
-          <Text color="gray">Active students this school year</Text>
+          <Text color="gray">
+            Active students this school year ({getActiveSchoolYear()})
+          </Text>
         </div>
         <div>
           <ActionIcon size={"xl"} color="gray" variant="light">

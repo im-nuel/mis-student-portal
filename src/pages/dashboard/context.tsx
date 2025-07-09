@@ -1,10 +1,12 @@
 import { GetListResponse, useList } from "@refinedev/core";
 import React from "react";
 import { StudentSchema } from "../../provider/schema/student.schema";
+import { getActiveSchoolYear } from "../../components/utils/getActiveSchoolYear";
 
 type DashboardContextValue = {
   section: {
     all: GetListResponse<StudentSchema>;
+    latest: GetListResponse<StudentSchema>;
     ecp: GetListResponse<StudentSchema>;
     es: GetListResponse<StudentSchema>;
     ms: GetListResponse<StudentSchema>;
@@ -20,21 +22,33 @@ export const DashboardContextProvider: React.FC<React.PropsWithChildren> = ({
   const { data: totalData } = useList<StudentSchema>({
     resource: "students",
     pagination: {
-      pageSize: 10,
+      pageSize: 0,
     },
-    sorters: [
+    filters: [
       {
-        field: "id",
-        order: "desc",
+        field: "school_year",
+        operator: "eq",
+        value: getActiveSchoolYear(),
       },
     ],
   });
+  
+  const { data: latestData } = useList<StudentSchema>({
+    resource: "students",
+    pagination: { pageSize: 10 },
+    sorters: [{ field: "id", order: "desc" }],
+    filters: [
+      { field: "school_year", operator: "eq", value: getActiveSchoolYear() },
+    ],
+  });
+
   const { data: ecpData } = useList<StudentSchema>({
     resource: "students",
     pagination: {
       pageSize: 0,
     },
     filters: [
+      { field: "school_year", operator: "eq", value: getActiveSchoolYear() },
       {
         field: "section",
         operator: "eq",
@@ -50,6 +64,7 @@ export const DashboardContextProvider: React.FC<React.PropsWithChildren> = ({
     },
 
     filters: [
+      { field: "school_year", operator: "eq", value: getActiveSchoolYear() },
       {
         field: "section",
         operator: "eq",
@@ -63,6 +78,7 @@ export const DashboardContextProvider: React.FC<React.PropsWithChildren> = ({
       pageSize: 0,
     },
     filters: [
+      { field: "school_year", operator: "eq", value: getActiveSchoolYear() },
       {
         field: "section",
         operator: "eq",
@@ -76,6 +92,7 @@ export const DashboardContextProvider: React.FC<React.PropsWithChildren> = ({
       pageSize: 0,
     },
     filters: [
+      { field: "school_year", operator: "eq", value: getActiveSchoolYear() },
       {
         field: "section",
         operator: "eq",
@@ -91,6 +108,10 @@ export const DashboardContextProvider: React.FC<React.PropsWithChildren> = ({
           all: {
             data: totalData?.data || [],
             total: totalData?.total || 0,
+          },
+          latest: {
+            data: latestData?.data || [],
+            total: latestData?.total || 0,
           },
           ecp: {
             data: ecpData?.data || [],

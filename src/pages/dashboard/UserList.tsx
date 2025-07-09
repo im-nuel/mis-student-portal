@@ -94,7 +94,7 @@ export const UserList: React.FC = () => {
   );
 
   const { getHeaderGroups, getRowModel } = useReactTable({
-    data: section.all.data,
+    data: section.latest.data,
     columns,
     getCoreRowModel: getCoreRowModel(),
   });
