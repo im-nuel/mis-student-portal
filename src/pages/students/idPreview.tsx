@@ -1,4 +1,4 @@
-import { Button, Group, Modal } from "@mantine/core";
+import { Button, Group, Modal, Checkbox } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { IDCardPreview } from "../../components/id_card_preview";
 import React from "react";
@@ -21,6 +21,7 @@ const TEMPLATE_SOURCE = {
 
 export const IDPreview: React.FC<{ record: StudentSchema }> = ({ record }) => {
   const [opened, { toggle }] = useDisclosure(false);
+  const [showQrCode, setShowQrCode] = React.useState(true);
   const refCanvas = React.useRef(null);
 
   const handlePrint = useReactToPrint({
@@ -63,8 +64,15 @@ export const IDPreview: React.FC<{ record: StudentSchema }> = ({ record }) => {
             ref={(ref) => (refCanvas.current = ref as any)}
             record={record}
             src={TEMPLATE_SOURCE[record.section]}
+            showQrCode={showQrCode}
           />
         )}
+        <Checkbox
+          label="Include QR Code"
+          checked={showQrCode}
+          onChange={(e) => setShowQrCode(e.currentTarget.checked)}
+          mt="md"
+        />
         <Group mt="lg" position="center">
           <Button onClick={handleDownload}>Download</Button>
           <Button onClick={handlePrint}>Print</Button>

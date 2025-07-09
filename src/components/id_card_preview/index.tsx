@@ -12,6 +12,7 @@ import { capitalizeString } from "../utils/capitalized";
 import moment from "moment";
 import { idValidity } from "../utils/idValidity";
 import { overflow } from "html2canvas/dist/types/css/property-descriptors/overflow";
+import QRCode from "react-qr-code";
 
 const COLOR_SECTION = {
   ECP: "white",
@@ -25,8 +26,9 @@ export const IDCardPreview = React.forwardRef<
   {
     src: string;
     record: StudentSchema;
+    showQrCode?: boolean;
   }
->(({ src, record }, ref) => {
+>(({ src, record, showQrCode }, ref) => {
   const left = 35;
   const color = COLOR_SECTION[record.section];
   return (
@@ -118,6 +120,17 @@ export const IDCardPreview = React.forwardRef<
                 {moment(record.date_of_birth).format("DD/MM/YYYY")}
               </Text>
             </Box>
+            {showQrCode && (
+              <Box pos="absolute" right={24} top={420} bg="white" p={5}>
+                <QRCode
+                  value={String(record.id)}
+                  size={83} // adjust size as needed
+                  bgColor="white"
+                  fgColor="black"
+                  style={{ height: "auto", maxWidth: "100%", width: "100%" }}
+                />
+              </Box>
+            )}
           </div>
         </AspectRatio>
       </Card.Section>
