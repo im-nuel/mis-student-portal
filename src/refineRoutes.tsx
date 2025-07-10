@@ -15,6 +15,7 @@ import { ForgotPassword } from "./pages/forgotPassword";
 import { Login } from "./pages/login";
 import { Register } from "./pages/register";
 import { LogbookList } from "./pages/logbook/LogbookList";
+import { ReportList } from "./pages/report/ReportList";
 import { authProvider } from "./provider/authentication";
 import { dataProvider } from "./provider/datasource";
 import { UserCreate, UserEdit, UserList, UserShow } from "./pages/users";
@@ -31,6 +32,7 @@ import {
   IconSettings,
   IconUsersGroup,
   IconBook2,
+  IconReportAnalytics,
 } from "@tabler/icons-react";
 import { ThemedLayoutV2 } from "./components/layout";
 import { DashboardPage } from "./pages/dashboard";
@@ -70,6 +72,15 @@ export const RefineRoutes = () => {
               canDelete: true,
               icon: <IconBook2 />,
               label: "Logbook",
+            },
+          },
+          {
+            name: "report",
+            list: "/report",
+            meta: {
+              canDelete: true,
+              icon: <IconReportAnalytics />,
+              label: "Student Report Card",
             },
           },
           {
@@ -140,6 +151,9 @@ export const RefineRoutes = () => {
             </Route>
             <Route path="/logbook">
               <Route index element={<LogbookList />} />
+            </Route>
+            <Route path="/report">
+              <Route index element={<ReportList />} />
             </Route>
             <Route path="/student">
               <Route path="create" element={<StudentCreate />} />
