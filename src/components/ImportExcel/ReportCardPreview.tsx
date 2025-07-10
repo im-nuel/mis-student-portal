@@ -6,9 +6,16 @@ import templateF4 from "./ReportTemplateF4.jpg";
 type Props = {
   student: any;
   paperSize: "A4" | "F4";
+  fontSize: number;
+  lineHeight: number;
+  date: string;
+  homeroom: string;
+  principal: string;
+  homeroomSignature: any;
+  principalSignature: any;
 };
 
-export const ReportCardPreview: React.FC<Props> = ({ student, paperSize }) => {
+export const ReportCardPreview: React.FC<Props> = ({ student, paperSize, fontSize, lineHeight, date, homeroom, principal, homeroomSignature, principalSignature }) => {
   const width = paperSize === "F4" ? 1248 : 1123;
   const height = 794;
   const backgroundImage = paperSize === "F4" ? templateF4 : templateA4;
@@ -166,8 +173,8 @@ export const ReportCardPreview: React.FC<Props> = ({ student, paperSize }) => {
           bg="transparent"
           style={{
             fontFamily: "Calibri, sans-serif",
-              fontSize: 11,
-              lineHeight: 1.2,
+              fontSize: fontSize,
+              lineHeight: lineHeight,
             overflow: "auto",
             whiteSpace: "pre-wrap", // preserve newlines
             zIndex: 1,
@@ -194,7 +201,7 @@ export const ReportCardPreview: React.FC<Props> = ({ student, paperSize }) => {
             key={index}
             style={{
               position: "absolute",
-              top: 179 + index * 20, // 20 spacing between each line
+              top: 179 + index * 19.4, // 20 spacing between each line
               left: 145,
               fontSize: 11,
               fontWeight: 600
@@ -209,7 +216,7 @@ export const ReportCardPreview: React.FC<Props> = ({ student, paperSize }) => {
             key={index}
             style={{
               position: "absolute",
-              top: 179 + index * 20, // 20 spacing between each line
+              top: 179 + index * 19.4, // 20 spacing between each line
               left: 407,
               fontSize: 11,
               fontWeight: 600
@@ -224,7 +231,7 @@ export const ReportCardPreview: React.FC<Props> = ({ student, paperSize }) => {
             key={index}
             style={{
               position: "absolute",
-              top: 179 + index * 20, // 20 spacing between each line
+              top: 179 + index * 19.4, // 20 spacing between each line
               left: 447,
               fontSize: 11,
               fontWeight: 600
@@ -239,7 +246,7 @@ export const ReportCardPreview: React.FC<Props> = ({ student, paperSize }) => {
             key={index}
             style={{
               position: "absolute",
-              top: 179 + index * 20, // 20 spacing between each line
+              top: 179 + index * 19.4, // 20 spacing between each line
               left: 507,
               fontSize: 11,
               fontWeight: 600
@@ -254,7 +261,7 @@ export const ReportCardPreview: React.FC<Props> = ({ student, paperSize }) => {
             key={index}
             style={{
               position: "absolute",
-              top: 179 + index * 20, // 20 spacing between each line
+              top: 179 + index * 19.4, // 20 spacing between each line
               right: 540,
               fontSize: 11,
               fontWeight: 600
@@ -269,7 +276,7 @@ export const ReportCardPreview: React.FC<Props> = ({ student, paperSize }) => {
             key={index}
             style={{
               position: "absolute",
-              top: 179 + index * 20, // 20 spacing between each line
+              top: 179 + index * 19.4, // 20 spacing between each line
               left: 615,
               fontSize: 11,
               fontWeight: 600
@@ -284,7 +291,7 @@ export const ReportCardPreview: React.FC<Props> = ({ student, paperSize }) => {
             key={index}
             style={{
               position: "absolute",
-              top: 179 + index * 20, // 20 spacing between each line
+              top: 179 + index * 19.4, // 20 spacing between each line
               left: 688,
               fontSize: 11,
               fontWeight: 600
@@ -299,7 +306,7 @@ export const ReportCardPreview: React.FC<Props> = ({ student, paperSize }) => {
             key={index}
             style={{
               position: "absolute",
-              top: 179 + index * 20, // 20 spacing between each line
+              top: 179 + index * 19.4, // 20 spacing between each line
               left: 729,
               fontSize: 11,
               fontWeight: 600
@@ -327,7 +334,7 @@ export const ReportCardPreview: React.FC<Props> = ({ student, paperSize }) => {
             key={index}
             style={{
               position: "absolute",
-              top: 179 + 290 + index * 20, // 20 spacing between each line
+              top: 180 + 290 + index * 18.7, // 20 spacing between each line
               left: 145,
               fontSize: 11,
               fontWeight: 600
@@ -342,7 +349,7 @@ export const ReportCardPreview: React.FC<Props> = ({ student, paperSize }) => {
             key={index}
             style={{
               position: "absolute",
-              top: 179 + 290 + index * 20, // 20 spacing between each line
+              top: 180 + 290 + index * 18.7, // 20 spacing between each line
               left: 407,
               fontSize: 11,
               fontWeight: 600
@@ -357,7 +364,7 @@ export const ReportCardPreview: React.FC<Props> = ({ student, paperSize }) => {
             key={index}
             style={{
               position: "absolute",
-              top: 179 + 290 + index * 20, // 20 spacing between each line
+              top: 180 + 290 + index * 18.7, // 20 spacing between each line
               left: 447,
               fontSize: 11,
               fontWeight: 600
@@ -372,7 +379,7 @@ export const ReportCardPreview: React.FC<Props> = ({ student, paperSize }) => {
             key={index}
             style={{
               position: "absolute",
-              top: 179 + 290 + index * 20, // 20 spacing between each line
+              top: 180 + 290 + index * 18.7, // 20 spacing between each line
               left: 507,
               fontSize: 11,
               fontWeight: 600
@@ -387,7 +394,7 @@ export const ReportCardPreview: React.FC<Props> = ({ student, paperSize }) => {
             key={index}
             style={{
               position: "absolute",
-              top: 179 + 290 + index * 20, // 20 spacing between each line
+              top: 180 + 290 + index * 18.7, // 20 spacing between each line
               right: 540,
               fontSize: 11,
               fontWeight: 600
@@ -402,7 +409,7 @@ export const ReportCardPreview: React.FC<Props> = ({ student, paperSize }) => {
             key={index}
             style={{
               position: "absolute",
-              top: 179 + 290 + index * 20, // 20 spacing between each line
+              top: 180 + 290 + index * 18.7, // 20 spacing between each line
               left: 615,
               fontSize: 11,
               fontWeight: 600
@@ -417,7 +424,7 @@ export const ReportCardPreview: React.FC<Props> = ({ student, paperSize }) => {
             key={index}
             style={{
               position: "absolute",
-              top: 179 + 290 + index * 20, // 20 spacing between each line
+              top: 180 + 290 + index * 18.7, // 20 spacing between each line
               left: 688,
               fontSize: 11,
               fontWeight: 600
@@ -432,7 +439,7 @@ export const ReportCardPreview: React.FC<Props> = ({ student, paperSize }) => {
             key={index}
             style={{
               position: "absolute",
-              top: 179 + 290 + index * 20, // 20 spacing between each line
+              top: 180 + 290 + index * 18.7, // 20 spacing between each line
               left: 729,
               fontSize: 11,
               fontWeight: 600
@@ -441,6 +448,101 @@ export const ReportCardPreview: React.FC<Props> = ({ student, paperSize }) => {
             {behavior_remarks}
           </Text>
         ))}
+
+        <Text
+          style={{
+            position: "absolute",
+            top: 663,
+            left: 698,
+            fontSize: 11,
+            fontWeight: 400,
+          }}
+        >
+          {date}
+        </Text>
+
+        <Text
+          style={{
+            position: "absolute",
+            top: 736,
+            left: 597,
+            width: 173,
+            textAlign: "center",
+            fontSize: 11,
+            fontWeight: 600,
+          }}
+        >
+          {homeroom}
+        </Text>
+
+        <Text
+          style={{
+            position: "absolute",
+            top: 736,
+            left: 747,
+            width: 173,
+            textAlign: "center",
+            fontSize: 11,
+            fontWeight: 600,
+          }}
+        >
+          {principal}
+        </Text>
+
+        <Box
+          style={{
+            position: "absolute",
+            top: 711,
+            left: 593,
+            width: 173,
+            height: 33,
+            overflow: "hidden",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            pointerEvents: "none",
+          }}
+        >
+          {homeroomSignature && (
+            <img
+              src={homeroomSignature}
+              alt="Homeroom Signature"
+              style={{
+                maxWidth: "100%",
+                maxHeight: "100%",
+                objectFit: "contain",
+              }}
+            />
+          )}
+        </Box>
+
+        <Box
+          style={{
+            position: "absolute",
+            top: 711,
+            left: 742,
+            width: 173,
+            height: 33,
+            overflow: "hidden",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            pointerEvents: "none",
+          }}
+        >
+          {principalSignature && (
+            <img
+              src={principalSignature}
+              alt="Principal Signature"
+              style={{
+                maxWidth: "100%",
+                maxHeight: "100%",
+                objectFit: "contain",
+              }}
+            />
+          )}
+        </Box>
+
       </Box>
     </Box>
   );
