@@ -14,7 +14,7 @@ export const ImportExcel = () => {
 
   // Step 2 state
   const [workbook, setWorkbook] = useState<XLSX.WorkBook | null>(null);
-  const [selectedSheet, setSelectedSheet] = useState<string | null>(null);
+  const [selectedSheet, setSelectedSheet] = useState<string[]>([]);
 
   // Step 3 meta (signatures, names, date)
   const [step3Meta, setStep3Meta] = useState({

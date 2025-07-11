@@ -3,7 +3,7 @@ import {
   Button,
   Group,
   Loader,
-  Select,
+  MultiSelect,
   Stack,
   Text,
   Title,
@@ -14,12 +14,12 @@ import React, { useState, useEffect } from "react";
 import * as XLSX from "xlsx";
 
 type Step2Props = {
-  onNext: (rows: any[]) => void;
+  onNext: (sheets: { sheetName: string; students: any[] }[]) => void;
   onBack: () => void;
   workbook: XLSX.WorkBook | null;
   setWorkbook: (wb: XLSX.WorkBook) => void;
-  selectedSheet: string | null;
-  setSelectedSheet: (sheet: string | null) => void;
+  selectedSheet: string[];
+  setSelectedSheet: (sheets: string[]) => void;
   majorSubjects: string[];
   electiveSubjects: string[];
 };
@@ -48,7 +48,7 @@ export const Step2: React.FC<Step2Props> = ({
       const wb = XLSX.read(buffer, { type: "array" });
       setWorkbook(wb);
       setSheetNames(wb.SheetNames);
-      setSelectedSheet(null); // reset selected sheet
+      setSelectedSheet([]); // reset
     } catch (error) {
       console.error("Error reading Excel file", error);
     } finally {
@@ -104,10 +104,9 @@ export const Step2: React.FC<Step2Props> = ({
       }
 
       if (!currentKey) continue;
-
       const student = students[currentKey];
 
-      // Push subject info
+      // Major
       if (entry.major_subject) student.major_subject.push(entry.major_subject);
       if (entry.major_credit) student.major_credit.push(entry.major_credit);
       if (entry.major_academic_value) student.major_academic_value.push(entry.major_academic_value);
@@ -117,6 +116,7 @@ export const Step2: React.FC<Step2Props> = ({
       if (entry.major_behavior_level) student.major_behavior_level.push(entry.major_behavior_level);
       if (entry.major_behavior_remarks) student.major_behavior_remarks.push(entry.major_behavior_remarks);
 
+      // Elective
       if (entry.elective_subject) student.elective_subject.push(entry.elective_subject);
       if (entry.elective_credit) student.elective_credit.push(entry.elective_credit);
       if (entry.elective_academic_value) student.elective_academic_value.push(entry.elective_academic_value);
@@ -131,20 +131,26 @@ export const Step2: React.FC<Step2Props> = ({
   };
 
   const handleProcess = () => {
-    if (!workbook || !selectedSheet) return;
-    const sheet = workbook.Sheets[selectedSheet];
-    const rows = XLSX.utils.sheet_to_json<string[]>(sheet, {
-      header: 1,
-      blankrows: false,
+    if (!workbook || selectedSheet.length === 0) return;
+
+    const sheetsToProcess = selectedSheet.map((sheetName) => {
+      const sheet = workbook.Sheets[sheetName];
+      const rows = XLSX.utils.sheet_to_json<string[]>(sheet, {
+        header: 1,
+        blankrows: false,
+      });
+      const students = transformRows(rows);
+      return { sheetName, students };
     });
 
-    const transformed = transformRows(rows);
-    onNext(transformed);
+    onNext(sheetsToProcess);
   };
 
   return (
     <Stack spacing="lg">
-      <Title order={5}>Step 2 of 3 – Upload the completed Report Card Excel and select the sheet to process.</Title>
+      <Title order={5}>
+        Step 2 of 3 – Upload the completed Report Card Excel and select sheet(s) to process
+      </Title>
 
       <Dropzone
         onDrop={(files) => handleExcel(files[0])}
@@ -174,11 +180,14 @@ export const Step2: React.FC<Step2Props> = ({
       )}
 
       {sheetNames.length > 0 && (
-        <Select
-          label="Select Sheet"
+        <MultiSelect
+          label="Select Sheet(s)"
           data={sheetNames}
           value={selectedSheet}
           onChange={setSelectedSheet}
+          placeholder="Pick one or more sheets"
+          searchable
+          clearable
         />
       )}
 
@@ -186,7 +195,7 @@ export const Step2: React.FC<Step2Props> = ({
         <Button variant="default" onClick={onBack}>
           ← Back
         </Button>
-        <Button disabled={!selectedSheet} onClick={handleProcess}>
+        <Button disabled={selectedSheet.length === 0} onClick={handleProcess}>
           Next →
         </Button>
       </Group>

@@ -1,23 +1,30 @@
 import {
   Box,
   Button,
+  Divider,
   Group,
+  NumberInput,
   Select,
+  Slider,
   Stack,
   Text,
-  Title,
-  Slider,
-  NumberInput,
   TextInput,
+  Title,
 } from "@mantine/core";
 import { IconDownload } from "@tabler/icons-react";
 import React, { useRef } from "react";
 import { ReportCardPreview } from "./ReportCardPreview";
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
+import { createRoot } from "react-dom/client";
+
+type SheetPreview = {
+  sheetName: string;
+  students: any[];
+};
 
 type Step3Props = {
-  data: any[];
+  data: SheetPreview[];
   onBack: () => void;
   meta: {
     date: string;
@@ -59,38 +66,71 @@ export const Step3: React.FC<Step3Props> = ({
   const [paperSize, setPaperSize] = React.useState<"A4" | "F4">("A4");
   const printRef = useRef<HTMLDivElement>(null);
 
+  
   const handleDownload = async () => {
-    if (!printRef.current) return;
-
-    const container = printRef.current;
-
-    const canvases = await Promise.all(
-      Array.from(container.children).map((child) =>
-        html2canvas(child as HTMLElement, {
-          scale: 4,
-          useCORS: true,
-          backgroundColor: null,
-        })
-      )
-    );
-
     const width = paperSize === "F4" ? 1248 : 1123;
     const height = 794;
 
-    const doc = new jsPDF({
-      orientation: "landscape",
-      unit: "px",
-      format: [width, height],
-    });
+    for (const sheet of data) {
+      for (const student of sheet.students) {
+        const tempContainer = document.createElement("div");
+        tempContainer.style.position = "absolute";
+        tempContainer.style.left = "-9999px";
+        document.body.appendChild(tempContainer);
 
-    canvases.forEach((canvas, index) => {
-      const imgData = canvas.toDataURL("image/jpeg", 1.0);
-      doc.addImage(imgData, "JPEG", 0, 0, width, height);
-      if (index < canvases.length - 1) doc.addPage();
-    });
+        const node = document.createElement("div");
+        tempContainer.appendChild(node);
 
-    doc.save("ReportCards.pdf");
+        const el = (
+          <ReportCardPreview
+            student={student}
+            paperSize={paperSize}
+            fontSize={fontSettings.fontSize}
+            lineHeight={fontSettings.lineHeight}
+            date={meta.date}
+            homeroom={meta.homeroom}
+            principal={meta.principal}
+            homeroomSignature={meta.homeroomSignature}
+            principalSignature={meta.principalSignature}
+          />
+        );
+
+        const root = createRoot(node);
+        root.render(el);
+
+        // Wait for DOM render
+        await new Promise((resolve) => setTimeout(resolve, 800));
+
+        const canvas = await html2canvas(node, {
+          scale: 4,
+          width,
+          height,
+          useCORS: true,
+          backgroundColor: null,
+        });
+
+        const doc = new jsPDF({
+          orientation: "landscape",
+          unit: "px",
+          format: [width, height],
+        });
+
+        const imgData = canvas.toDataURL("image/jpeg", 1.0);
+        doc.addImage(imgData, "JPEG", 0, 0, width, height);
+
+        const cleanName = student.name?.replace(/[/\\?%*:|"<>]/g, "-") || "Student";
+        const cleanSemester = student.semester?.replace(/[/\\?%*:|"<>]/g, "-") || "Semester";
+
+        doc.save(`${cleanName} (Sem ${cleanSemester} Report Card).pdf`);
+
+        // Cleanup
+        root.unmount();
+        document.body.removeChild(tempContainer);
+      }
+    }
   };
+
+
 
   return (
     <Stack spacing="lg">
@@ -126,22 +166,31 @@ export const Step3: React.FC<Step3Props> = ({
           background: "#f8f9fa",
         }}
       >
-        {data.map((student, index) => (
-          <ReportCardPreview
-            key={index}
-            student={student}
-            paperSize={paperSize}
-            fontSize={fontSize}
-            lineHeight={lineHeight}
-            date={meta.date}
-            homeroom={meta.homeroom}
-            principal={meta.principal}
-            homeroomSignature={meta.homeroomSignature}
-            principalSignature={meta.principalSignature}
-          />
+        {data.map((sheet, si) => (
+          <Box key={si} mb="xl">
+            <Title order={6} mb="sm" style={{ textTransform: "uppercase" }}>
+              Sheet: {sheet.sheetName}
+            </Title>
+            {sheet.students.map((student, index) => (
+              <ReportCardPreview
+                key={index}
+                student={student}
+                paperSize={paperSize}
+                fontSize={fontSize}
+                lineHeight={lineHeight}
+                date={meta.date}
+                homeroom={meta.homeroom}
+                principal={meta.principal}
+                homeroomSignature={meta.homeroomSignature}
+                principalSignature={meta.principalSignature}
+              />
+            ))}
+            <Divider mt="lg" />
+          </Box>
         ))}
       </Box>
 
+      {/* Adjustment Panel */}
       <Box
         style={{
           padding: 16,
@@ -154,7 +203,6 @@ export const Step3: React.FC<Step3Props> = ({
         <Stack spacing="md">
           <Title order={5}>Adjustments</Title>
           <Group align="flex-start" grow noWrap>
-            {/* Font Size & Line Height */}
             <Stack style={{ flex: 1 }} spacing="md">
               <Box>
                 <Text size="sm" fw={500} mb={4}>
@@ -226,7 +274,7 @@ export const Step3: React.FC<Step3Props> = ({
               </Box>
             </Stack>
 
-            {/* Signature Fields */}
+            {/* Meta inputs */}
             <Box style={{ width: 220 }}>
               <Text size="sm" fw={500} mb={4}>
                 Signature Date
@@ -237,30 +285,6 @@ export const Step3: React.FC<Step3Props> = ({
                 value={meta.date}
                 onChange={(e) =>
                   setMeta((prev) => ({ ...prev, date: e.target.value }))
-                }
-              />
-
-              <Text size="sm" pt="xs" fw={500} mb={4}>
-                Homeroom Advisor
-              </Text>
-              <TextInput
-                placeholder="e.g. Ms. Gadis Kloah"
-                size="sm"
-                value={meta.homeroom}
-                onChange={(e) =>
-                  setMeta((prev) => ({ ...prev, homeroom: e.target.value }))
-                }
-              />
-
-              <Text size="sm" pt="xs" fw={500} mb={4}>
-                Principal
-              </Text>
-              <TextInput
-                placeholder="e.g. Ms. Gadis Kloah 2"
-                size="sm"
-                value={meta.principal}
-                onChange={(e) =>
-                  setMeta((prev) => ({ ...prev, principal: e.target.value }))
                 }
               />
             </Box>
@@ -305,6 +329,18 @@ export const Step3: React.FC<Step3Props> = ({
                   />
                 </Box>
               )}
+
+              <Text size="sm" pt="xs" fw={500} mb={4}>
+                Homeroom Advisor
+              </Text>
+              <TextInput
+                placeholder="Homeroom Advisor Name"
+                size="sm"
+                value={meta.homeroom}
+                onChange={(e) =>
+                  setMeta((prev) => ({ ...prev, homeroom: e.target.value }))
+                }
+              />
             </Box>
 
             <Box style={{ width: 220 }}>
@@ -347,6 +383,18 @@ export const Step3: React.FC<Step3Props> = ({
                   />
                 </Box>
               )}
+
+              <Text size="sm" pt="xs" fw={500} mb={4}>
+                Principal
+              </Text>
+              <TextInput
+                placeholder="Principal Name"
+                size="sm"
+                value={meta.principal}
+                onChange={(e) =>
+                  setMeta((prev) => ({ ...prev, principal: e.target.value }))
+                }
+              />
             </Box>
           </Group>
         </Stack>
