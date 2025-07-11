@@ -35,7 +35,7 @@ const SubjectInput: React.FC<SubjectInputProps> = ({
 
   return (
     <Box>
-      <Title order={5} mb="xs">{label}</Title>
+      <Title order={4} mb="xs">{label}</Title>
       <Stack spacing="xs">
         {subjects.map((value, index) => (
           <Group key={index} spacing="xs">
@@ -70,18 +70,25 @@ const SubjectInput: React.FC<SubjectInputProps> = ({
 };
 
 type ReportCardStep1Props = {
+  major: string[];
+  elective: string[];
+  setMajor: (val: string[]) => void;
+  setElective: (val: string[]) => void;
   onNext: (templateStructure: {
     major: string[];
     elective: string[];
   }) => void;
 };
 
-export const Step1: React.FC<ReportCardStep1Props> = ({ onNext }) => {
-  const [majorSubjects, setMajorSubjects] = React.useState<string[]>([""]);
-  const [electiveSubjects, setElectiveSubjects] = React.useState<string[]>([""]);
-
+export const Step1: React.FC<ReportCardStep1Props> = ({
+  major,
+  elective,
+  setMajor,
+  setElective,
+  onNext,
+}) => {
   const handleDownloadTemplate = () => {
-    const maxLength = Math.max(majorSubjects.length, electiveSubjects.length);
+    const maxLength = Math.max(major.length, elective.length);
     const templateRows = Array.from({ length: maxLength }).map((_, i) => ({
       id: "",
       name: "",
@@ -94,7 +101,7 @@ export const Step1: React.FC<ReportCardStep1Props> = ({ onNext }) => {
       late: "",
       absent: "",
       notes: "",
-      major_subject: majorSubjects[i] || "",
+      major_subject: major[i] || "",
       major_credit: "",
       major_academic_value: "",
       major_academic_level: "",
@@ -102,7 +109,7 @@ export const Step1: React.FC<ReportCardStep1Props> = ({ onNext }) => {
       major_behavior_value: "",
       major_behavior_level: "",
       major_behavior_remarks: "",
-      elective_subject: electiveSubjects[i] || "",
+      elective_subject: elective[i] || "",
       elective_credit: "",
       elective_academic_value: "",
       elective_academic_level: "",
@@ -112,7 +119,6 @@ export const Step1: React.FC<ReportCardStep1Props> = ({ onNext }) => {
       elective_behavior_remarks: "",
     }));
 
-    // ✅ This must be an array of objects
     const worksheet = XLSX.utils.json_to_sheet(templateRows);
     const workbook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(workbook, worksheet, "Change to Student ID");
@@ -122,35 +128,23 @@ export const Step1: React.FC<ReportCardStep1Props> = ({ onNext }) => {
 
   const handleNext = () => {
     onNext({
-      major: majorSubjects.filter((s) => s.trim() !== ""),
-      elective: electiveSubjects.filter((s) => s.trim() !== ""),
+      major: major.filter((s) => s.trim() !== ""),
+      elective: elective.filter((s) => s.trim() !== ""),
     });
   };
 
   return (
     <Stack spacing="xl">
-      <Text size="sm" color="dimmed">
-        Step 1 of 2 – Configure your Report Card Template by entering subject names.
-      </Text>
+      <Title order={5}>Step 1 of 3 – Configure your Report Card Template by entering subject names.</Title>
 
-      <SubjectInput
-        label="Major Subjects"
-        subjects={majorSubjects}
-        setSubjects={setMajorSubjects}
-      />
-      <SubjectInput
-        label="Elective Subjects"
-        subjects={electiveSubjects}
-        setSubjects={setElectiveSubjects}
-      />
+      <SubjectInput label="Major Subjects" subjects={major} setSubjects={setMajor} />
+      <SubjectInput label="Elective Subjects" subjects={elective} setSubjects={setElective} />
 
       <Group position="apart" mt="xl">
         <Button variant="default" onClick={handleDownloadTemplate}>
           Download Template
         </Button>
-        <Button onClick={handleNext}>
-          Next
-        </Button>
+        <Button onClick={handleNext}>Next →</Button>
       </Group>
     </Stack>
   );

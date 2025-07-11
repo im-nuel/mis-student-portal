@@ -6,25 +6,40 @@ import {
   Select,
   Stack,
   Text,
+  Title,
 } from "@mantine/core";
 import { Dropzone, MIME_TYPES } from "@mantine/dropzone";
-import {
-  IconUpload,
-  IconX,
-  IconFileSpreadsheet,
-} from "@tabler/icons-react";
-import React, { useState } from "react";
+import { IconUpload } from "@tabler/icons-react";
+import React, { useState, useEffect } from "react";
 import * as XLSX from "xlsx";
 
 type Step2Props = {
   onNext: (rows: any[]) => void;
+  onBack: () => void;
+  workbook: XLSX.WorkBook | null;
+  setWorkbook: (wb: XLSX.WorkBook) => void;
+  selectedSheet: string | null;
+  setSelectedSheet: (sheet: string | null) => void;
+  majorSubjects: string[];
+  electiveSubjects: string[];
 };
 
-export const Step2: React.FC<Step2Props> = ({ onNext }) => {
+export const Step2: React.FC<Step2Props> = ({
+  onNext,
+  onBack,
+  workbook,
+  setWorkbook,
+  selectedSheet,
+  setSelectedSheet,
+}) => {
   const [sheetNames, setSheetNames] = useState<string[]>([]);
-  const [selectedSheet, setSelectedSheet] = useState<string | null>(null);
-  const [workbook, setWorkbook] = useState<XLSX.WorkBook | null>(null);
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (workbook) {
+      setSheetNames(workbook.SheetNames);
+    }
+  }, [workbook]);
 
   const handleExcel = async (file: File) => {
     try {
@@ -33,6 +48,7 @@ export const Step2: React.FC<Step2Props> = ({ onNext }) => {
       const wb = XLSX.read(buffer, { type: "array" });
       setWorkbook(wb);
       setSheetNames(wb.SheetNames);
+      setSelectedSheet(null); // reset selected sheet
     } catch (error) {
       console.error("Error reading Excel file", error);
     } finally {
@@ -100,7 +116,7 @@ export const Step2: React.FC<Step2Props> = ({ onNext }) => {
       if (entry.major_behavior_value) student.major_behavior_value.push(entry.major_behavior_value);
       if (entry.major_behavior_level) student.major_behavior_level.push(entry.major_behavior_level);
       if (entry.major_behavior_remarks) student.major_behavior_remarks.push(entry.major_behavior_remarks);
-      
+
       if (entry.elective_subject) student.elective_subject.push(entry.elective_subject);
       if (entry.elective_credit) student.elective_credit.push(entry.elective_credit);
       if (entry.elective_academic_value) student.elective_academic_value.push(entry.elective_academic_value);
@@ -128,9 +144,7 @@ export const Step2: React.FC<Step2Props> = ({ onNext }) => {
 
   return (
     <Stack spacing="lg">
-      <Text size="sm" color="dimmed">
-        Step 2 – Upload the completed Report Card Excel and select the sheet to process.
-      </Text>
+      <Title order={5}>Step 2 of 3 – Upload the completed Report Card Excel and select the sheet to process.</Title>
 
       <Dropzone
         onDrop={(files) => handleExcel(files[0])}
@@ -169,8 +183,11 @@ export const Step2: React.FC<Step2Props> = ({ onNext }) => {
       )}
 
       <Group position="right">
+        <Button variant="default" onClick={onBack}>
+          ← Back
+        </Button>
         <Button disabled={!selectedSheet} onClick={handleProcess}>
-          Next
+          Next →
         </Button>
       </Group>
     </Stack>
