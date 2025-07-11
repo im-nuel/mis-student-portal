@@ -157,39 +157,6 @@ export const Step3: React.FC<Step3Props> = ({
         </Group>
       </Group>
 
-      <Box
-        ref={printRef}
-        style={{
-          overflow: "auto",
-          maxHeight: "calc(100vh - 160px)",
-          padding: 16,
-          background: "#f8f9fa",
-        }}
-      >
-        {data.map((sheet, si) => (
-          <Box key={si} mb="xl">
-            <Title order={6} mb="sm" style={{ textTransform: "uppercase" }}>
-              Sheet: {sheet.sheetName}
-            </Title>
-            {sheet.students.map((student, index) => (
-              <ReportCardPreview
-                key={index}
-                student={student}
-                paperSize={paperSize}
-                fontSize={fontSize}
-                lineHeight={lineHeight}
-                date={meta.date}
-                homeroom={meta.homeroom}
-                principal={meta.principal}
-                homeroomSignature={meta.homeroomSignature}
-                principalSignature={meta.principalSignature}
-              />
-            ))}
-            <Divider mt="lg" />
-          </Box>
-        ))}
-      </Box>
-
       {/* Adjustment Panel */}
       <Box
         style={{
@@ -398,6 +365,39 @@ export const Step3: React.FC<Step3Props> = ({
             </Box>
           </Group>
         </Stack>
+      </Box>
+
+      <Box
+        ref={printRef}
+        style={{
+          overflow: "auto",
+          maxHeight: "calc(100vh - 160px)",
+          padding: 16,
+          background: "#f8f9fa",
+        }}
+      >
+        {data.map((sheet, si) => (
+          <Box key={si} mb="xl">
+            <Title order={6} mb="sm" style={{ textTransform: "uppercase" }}>
+              Sheet: {sheet.sheetName}
+            </Title>
+            {sheet.students.map((student, index) => (
+              <ReportCardPreview
+                key={index}
+                student={student}
+                paperSize={paperSize}
+                fontSize={fontSize}
+                lineHeight={lineHeight}
+                date={meta.date}
+                homeroom={meta.homeroom}
+                principal={meta.principal}
+                homeroomSignature={meta.homeroomSignature}
+                principalSignature={meta.principalSignature}
+              />
+            ))}
+            <Divider mt="lg" />
+          </Box>
+        ))}
       </Box>
     </Stack>
   );
