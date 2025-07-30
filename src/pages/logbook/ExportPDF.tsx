@@ -53,6 +53,25 @@ const cropImageToTopSquare = async (url: string, size = 5000): Promise<string | 
     });
 };
 
+const loadImageAsBase64 = (url: string): Promise<string | null> => {
+    return new Promise((resolve, reject) => {
+        const img = new Image();
+        img.crossOrigin = "anonymous";
+        img.onload = () => {
+            const canvas = document.createElement("canvas");
+            canvas.width = img.width;
+            canvas.height = img.height;
+            const ctx = canvas.getContext("2d");
+            if (!ctx) return reject("Canvas context not available");
+            ctx.drawImage(img, 0, 0);
+            resolve(canvas.toDataURL("image/jpeg"));
+        };
+        img.onerror = () => resolve(null);
+        img.src = url;
+    });
+};
+
+
 const getLabelFromSchema = (key: keyof StudentSchema, value: string) => {
     return (
         STUDENT_IMPORT_SCHEMA[key]?.fieldType?.options?.find(
@@ -164,12 +183,19 @@ export const ExportPDF: React.FC<ExportPDFProps> = ({
                 } else if (key === "photo") {
                     if (typeof value === "string" && value.startsWith("http")) {
                         try {
-                            const croppedBase64 = await cropImageToTopSquare(value, 5000);
-                            if (croppedBase64) {
-                                rowData.push({ image: croppedBase64, width: 25, height: 25 });
+                            // ✅ Keep aspect ratio, only limit width or height
+                            const base64Img = await loadImageAsBase64(value);
+                            if (base64Img) {
+                                rowData.push({ image: base64Img, width: 25 });
                             } else {
                                 rowData.push("");
                             }
+                            // const croppedBase64 = await cropImageToTopSquare(value, 5000);
+                            // if (croppedBase64) {
+                            //     rowData.push({ image: croppedBase64, width: 25, height: 25 });
+                            // } else {
+                            //     rowData.push("");
+                            // }
                         } catch {
                             rowData.push("");
                         }
@@ -194,6 +220,7 @@ export const ExportPDF: React.FC<ExportPDFProps> = ({
                 ? "A4"
                 : { width: mmToPt(210), height: mmToPt(330) },
             pageOrientation: orientation,
+            pageMargins: [20, 30, 20, 30],
             content: [
                 {
                 columns: [
@@ -205,7 +232,7 @@ export const ExportPDF: React.FC<ExportPDFProps> = ({
                     },
                     {
                     width: "auto",
-                    text: `Created: ${dayjs().format("DD/MM/YYYY")}`,
+                    text: `Created: ${dayjs().format("DD/MM/YYYY HH:mm:ss")}`,
                     alignment: "right",
                     italics: true,
                     fontSize: 9,
@@ -244,8 +271,13 @@ export const ExportPDF: React.FC<ExportPDFProps> = ({
             },
         };
 
+        let filterSuffix = "";
+        if (gradeFilter) filterSuffix += `_${gradeFilter}`;
+        if (sectionFilter) filterSuffix += `_${sectionFilter}`;
+        if (schoolYearFilter) filterSuffix += `_${schoolYearFilter.replace("/", "-")}`;
+        filterSuffix = filterSuffix.replace(/\s+/g, "_");
 
-        pdfMake.createPdf(docDefinition).download(`Student_Logbook_${paperSize}.pdf`);
+        pdfMake.createPdf(docDefinition).download(`Student_Logbook_${paperSize}${filterSuffix}.pdf`);
         setIsDownloading(false);
     };
 
