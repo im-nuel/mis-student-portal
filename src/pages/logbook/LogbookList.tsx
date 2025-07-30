@@ -118,19 +118,21 @@ const allLogbookColumns: Record<string, ColumnDef<StudentSchema>> = {
     enableSorting: true,
     enableColumnFilter: false,
     sortingFn: (rowA, rowB) => {
-      const a = rowA.original;
-      const b = rowB.original;
-      const aHasLast = !!a.last_name?.trim();
-      const bHasLast = !!b.last_name?.trim();
+      // ✅ Compare grade first
+      const gradeA = rowA.original.grade;
+      const gradeB = rowB.original.grade;
+      const indexA = gradeOrder.indexOf(gradeA);
+      const indexB = gradeOrder.indexOf(gradeB);
 
-      if (!aHasLast && bHasLast) return -1;
-      if (aHasLast && !bHasLast) return 1;
-      if (!aHasLast && !bHasLast) {
-        return (a.first_name || "").localeCompare(b.first_name || "");
-      }
+      if (indexA !== indexB) return indexA - indexB;
 
-      return (a.last_name || "").localeCompare(b.last_name || "");
+      // ✅ If same grade, then sort by name (last name → first name)
+      const nameA = `${rowA.original.last_name || ""} ${rowA.original.first_name || ""}`.trim();
+      const nameB = `${rowB.original.last_name || ""} ${rowB.original.first_name || ""}`.trim();
+
+      return nameA.localeCompare(nameB);
     },
+
     cell: ({ getValue }) => (
       <TextField value={capitalizeString(getValue<string>())} />
     ),
@@ -469,6 +471,7 @@ export const LogbookList: React.FC<IResourceComponentsProps> = () => {
       },
     },
     initialState: {
+      sorting: [{ id: "student_name", desc: false }],
       pagination: {
         pageSize: 5000,
         pageIndex: 0,
