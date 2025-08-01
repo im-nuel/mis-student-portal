@@ -246,6 +246,7 @@ export const ExportPDF: React.FC<ExportPDFProps> = ({
                 {
                 table: {
                     headerRows: 1,
+                    dontBreakRows: true,
                     widths: columnsToExport.map(() => "auto"),
                     body,
                 },
@@ -253,6 +254,7 @@ export const ExportPDF: React.FC<ExportPDFProps> = ({
                     fillColor: (rowIndex: number) => (rowIndex === 0 ? "#f5f5f5" : null),
                 },
                 style: "tableStyle",
+                keepTogether: true,
                 },
             ],
             styles: {
@@ -262,12 +264,12 @@ export const ExportPDF: React.FC<ExportPDFProps> = ({
                 alignment: "left",
                 },
                 tableStyle: {
-                fontSize: 5.5,
+                fontSize: 4.5,
                 margin: [0, 1, 0, 1],
                 },
             },
             defaultStyle: {
-                fontSize: 5.5,
+                fontSize: 4.5,
             },
         };
 
