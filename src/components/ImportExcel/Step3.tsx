@@ -45,11 +45,17 @@ type Step3Props = {
   fontSettings: {
     fontSize: number;
     lineHeight: number;
+    subjectsFontSize: number;
+    homeroomFontSize: number;
+    principalFontSize: number;
   };
   setFontSettings: React.Dispatch<
     React.SetStateAction<{
       fontSize: number;
       lineHeight: number;
+      subjectsFontSize: number;
+      homeroomFontSize: number;
+      principalFontSize: number;
     }>
   >;
 };
@@ -62,7 +68,7 @@ export const Step3: React.FC<Step3Props> = ({
   fontSettings,
   setFontSettings,
 }) => {
-  const { fontSize, lineHeight } = fontSettings;
+  const { fontSize, lineHeight, subjectsFontSize, homeroomFontSize, principalFontSize } = fontSettings;
   const [paperSize, setPaperSize] = React.useState<"A4" | "F4">("A4");
   const printRef = useRef<HTMLDivElement>(null);
 
@@ -87,6 +93,9 @@ export const Step3: React.FC<Step3Props> = ({
             paperSize={paperSize}
             fontSize={fontSettings.fontSize}
             lineHeight={fontSettings.lineHeight}
+            subjectsFontSize={fontSettings.subjectsFontSize}
+            homeroomFontSize={fontSettings.homeroomFontSize}
+            principalFontSize={fontSettings.principalFontSize}
             date={meta.date}
             homeroom={meta.homeroom}
             principal={meta.principal}
@@ -173,13 +182,46 @@ export const Step3: React.FC<Step3Props> = ({
             <Stack style={{ flex: 1 }} spacing="md">
               <Box>
                 <Text size="sm" fw={500} mb={4}>
+                  Subjects Font Size ({fontSettings.subjectsFontSize}px)
+                </Text>
+                <Group spacing="xs" align="center" grow>
+                  <Slider
+                    min={5}
+                    max={11}
+                    step={0.1}
+                    value={fontSettings.subjectsFontSize}
+                    onChange={(val) =>
+                      setFontSettings((prev) => ({ ...prev, subjectsFontSize: val }))
+                    }
+                  />
+                  <NumberInput
+                    min={5}
+                    max={11}
+                    step={0.1}
+                    precision={1}
+                    value={fontSettings.subjectsFontSize}
+                    onChange={(val) =>
+                      typeof val === "number" &&
+                      setFontSettings((prev) => ({
+                        ...prev,
+                        subjectsFontSize: val,
+                      }))
+                    }
+                    w={70}
+                    size="xs"
+                  />
+                </Group>
+              </Box>
+
+              <Box>
+                <Text size="sm" fw={500} mb={4}>
                   Notes Font Size ({fontSize}px)
                 </Text>
                 <Group spacing="xs" align="center" grow>
                   <Slider
                     min={5}
                     max={20}
-                    step={1}
+                    step={0.1}
                     value={fontSize}
                     onChange={(val) =>
                       setFontSettings((prev) => ({ ...prev, fontSize: val }))
@@ -188,7 +230,8 @@ export const Step3: React.FC<Step3Props> = ({
                   <NumberInput
                     min={5}
                     max={20}
-                    step={1}
+                    step={0.1}
+                    precision={1}
                     value={fontSize}
                     onChange={(val) =>
                       typeof val === "number" &&
@@ -308,6 +351,37 @@ export const Step3: React.FC<Step3Props> = ({
                   setMeta((prev) => ({ ...prev, homeroom: e.target.value }))
                 }
               />
+
+              <Text size="sm" pt="xs" fw={500} mb={4}>
+                Homeroom Font Size ({fontSettings.homeroomFontSize}px)
+              </Text>
+              <Group spacing="xs" align="center" grow>
+                <Slider
+                  min={5}
+                  max={11}
+                  step={0.1}
+                  value={fontSettings.homeroomFontSize}
+                  onChange={(val) =>
+                    setFontSettings((prev) => ({ ...prev, homeroomFontSize: val }))
+                  }
+                />
+                <NumberInput
+                  min={5}
+                  max={11}
+                  step={0.1}
+                  precision={1}
+                  value={fontSettings.homeroomFontSize}
+                  onChange={(val) =>
+                    typeof val === "number" &&
+                    setFontSettings((prev) => ({
+                      ...prev,
+                      homeroomFontSize: val,
+                    }))
+                  }
+                  w={70}
+                  size="xs"
+                />
+              </Group>
             </Box>
 
             <Box style={{ width: 220 }}>
@@ -362,6 +436,37 @@ export const Step3: React.FC<Step3Props> = ({
                   setMeta((prev) => ({ ...prev, principal: e.target.value }))
                 }
               />
+
+              <Text size="sm" pt="xs" fw={500} mb={4}>
+                Principal Font Size ({fontSettings.principalFontSize}px)
+              </Text>
+              <Group spacing="xs" align="center" grow>
+                <Slider
+                  min={5}
+                  max={11}
+                  step={0.1}
+                  value={fontSettings.principalFontSize}
+                  onChange={(val) =>
+                    setFontSettings((prev) => ({ ...prev, principalFontSize: val }))
+                  }
+                />
+                <NumberInput
+                  min={5}
+                  max={11}
+                  step={0.1}
+                  precision={1}
+                  value={fontSettings.principalFontSize}
+                  onChange={(val) =>
+                    typeof val === "number" &&
+                    setFontSettings((prev) => ({
+                      ...prev,
+                      principalFontSize: val,
+                    }))
+                  }
+                  w={70}
+                  size="xs"
+                />
+              </Group>
             </Box>
           </Group>
         </Stack>
@@ -387,6 +492,9 @@ export const Step3: React.FC<Step3Props> = ({
                 student={student}
                 paperSize={paperSize}
                 fontSize={fontSize}
+                subjectsFontSize={subjectsFontSize}
+                homeroomFontSize={homeroomFontSize}
+                principalFontSize={principalFontSize}
                 lineHeight={lineHeight}
                 date={meta.date}
                 homeroom={meta.homeroom}

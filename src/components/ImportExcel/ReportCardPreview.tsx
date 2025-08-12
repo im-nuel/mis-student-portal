@@ -8,6 +8,9 @@ type Props = {
   paperSize: "A4" | "F4";
   fontSize: number;
   lineHeight: number;
+  subjectsFontSize: number;
+  homeroomFontSize: number;
+  principalFontSize: number;
   date: string;
   homeroom: string;
   principal: string;
@@ -15,7 +18,7 @@ type Props = {
   principalSignature: any;
 };
 
-export const ReportCardPreview: React.FC<Props> = ({ student, paperSize, fontSize, lineHeight, date, homeroom, principal, homeroomSignature, principalSignature }) => {
+export const ReportCardPreview: React.FC<Props> = ({ student, paperSize, fontSize, lineHeight, subjectsFontSize, homeroomFontSize, principalFontSize, date, homeroom, principal, homeroomSignature, principalSignature }) => {
   const width = paperSize === "F4" ? 1248 : 1123;
   const height = 794;
   const backgroundImage = paperSize === "F4" ? templateF4 : templateA4;
@@ -201,9 +204,9 @@ export const ReportCardPreview: React.FC<Props> = ({ student, paperSize, fontSiz
             key={index}
             style={{
               position: "absolute",
-              top: 179 + index * 19.4, // 20 spacing between each line
+              top: 179 + index * 19.4, // vertical spacing between each line
               left: 145,
-              fontSize: 11,
+              fontSize: subjectsFontSize, // adjustable from settings
               fontWeight: 600
             }}
           >
@@ -336,7 +339,7 @@ export const ReportCardPreview: React.FC<Props> = ({ student, paperSize, fontSiz
               position: "absolute",
               top: 180 + 290 + index * 18.7, // 20 spacing between each line
               left: 145,
-              fontSize: 11,
+              fontSize: subjectsFontSize,
               fontWeight: 600
             }}
           >
@@ -468,7 +471,7 @@ export const ReportCardPreview: React.FC<Props> = ({ student, paperSize, fontSiz
             left: 597,
             width: 173,
             textAlign: "center",
-            fontSize: 11,
+            fontSize: homeroomFontSize,
             fontWeight: 600,
           }}
         >
@@ -482,7 +485,7 @@ export const ReportCardPreview: React.FC<Props> = ({ student, paperSize, fontSiz
             left: 747,
             width: 173,
             textAlign: "center",
-            fontSize: 11,
+            fontSize: principalFontSize,
             fontWeight: 600,
           }}
         >

@@ -29,6 +29,9 @@ export const ImportExcel = () => {
   const [fontSettings, setFontSettings] = useState({
     fontSize: 11,
     lineHeight: 1.2,
+    subjectsFontSize: 11,
+    homeroomFontSize: 11,
+    principalFontSize: 11,
   });
 
   return (
