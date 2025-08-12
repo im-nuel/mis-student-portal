@@ -78,6 +78,14 @@ export const Step3: React.FC<Step3Props> = ({
     const height = 794;
 
     for (const sheet of data) {
+      const doc = new jsPDF({
+        orientation: "landscape",
+        unit: "px",
+        format: [width, height],
+      });
+
+      let firstPage = true;
+
       for (const student of sheet.students) {
         const tempContainer = document.createElement("div");
         tempContainer.style.position = "absolute";
@@ -118,27 +126,29 @@ export const Step3: React.FC<Step3Props> = ({
           backgroundColor: null,
         });
 
-        const doc = new jsPDF({
-          orientation: "landscape",
-          unit: "px",
-          format: [width, height],
-        });
-
         const imgData = canvas.toDataURL("image/jpeg", 1.0);
+
+        if (!firstPage) {
+          doc.addPage([width, height], "landscape");
+        } else {
+          firstPage = false;
+        }
+
         doc.addImage(imgData, "JPEG", 0, 0, width, height);
-
-        const cleanName = student.name?.replace(/[/\\?%*:|"<>]/g, "-") || "Student";
-        const cleanSemester = student.semester?.replace(/[/\\?%*:|"<>]/g, "-") || "Semester";
-
-        doc.save(`${cleanName} (Sem ${cleanSemester} Report Card).pdf`);
 
         // Cleanup
         root.unmount();
         document.body.removeChild(tempContainer);
       }
+
+      // Use first student in sheet for filename
+      const firstStudent = sheet.students[0];
+      const cleanName = firstStudent?.name?.replace(/[/\\?%*:|"<>]/g, "-") || "Student";
+      const cleanSemester = firstStudent?.semester?.replace(/[/\\?%*:|"<>]/g, "-") || "Semester";
+
+      doc.save(`${cleanName} (Sem ${cleanSemester} Report Card).pdf`);
     }
   };
-
 
 
   return (
