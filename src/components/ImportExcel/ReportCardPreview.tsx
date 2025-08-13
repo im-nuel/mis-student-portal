@@ -495,10 +495,10 @@ export const ReportCardPreview: React.FC<Props> = ({ student, paperSize, fontSiz
         <Box
           style={{
             position: "absolute",
-            top: 711,
+            top: 688,
             left: 593,
             width: 173,
-            height: 33,
+            height: 65,
             overflow: "hidden",
             display: "flex",
             alignItems: "center",
@@ -522,10 +522,10 @@ export const ReportCardPreview: React.FC<Props> = ({ student, paperSize, fontSiz
         <Box
           style={{
             position: "absolute",
-            top: 711,
+            top: 688,
             left: 742,
             width: 173,
-            height: 33,
+            height: 65,
             overflow: "hidden",
             display: "flex",
             alignItems: "center",
