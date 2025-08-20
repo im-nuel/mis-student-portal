@@ -105,7 +105,7 @@ export const ReportCardPreview: React.FC<Props> = ({ student, paperSize, fontSiz
         <Text
           style={{
             position: "absolute",
-            top: 560,
+            top: 561,
             right: 540,
             fontSize: 14,
             fontWeight: 700,
