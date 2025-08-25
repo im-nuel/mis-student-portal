@@ -48,6 +48,10 @@ type Step3Props = {
     subjectsFontSize: number;
     homeroomFontSize: number;
     principalFontSize: number;
+    homeroomSignTop: number;
+    principalSignTop:number;
+    homeroomSignSize: number;
+    principalSignSize: number;
   };
   setFontSettings: React.Dispatch<
     React.SetStateAction<{
@@ -56,6 +60,10 @@ type Step3Props = {
       subjectsFontSize: number;
       homeroomFontSize: number;
       principalFontSize: number;
+      homeroomSignTop: number;
+      principalSignTop:number;
+      homeroomSignSize: number;
+      principalSignSize: number;
     }>
   >;
 };
@@ -68,7 +76,7 @@ export const Step3: React.FC<Step3Props> = ({
   fontSettings,
   setFontSettings,
 }) => {
-  const { fontSize, lineHeight, subjectsFontSize, homeroomFontSize, principalFontSize } = fontSettings;
+  const { fontSize, lineHeight, subjectsFontSize, homeroomFontSize, principalFontSize, homeroomSignTop, principalSignTop, homeroomSignSize, principalSignSize } = fontSettings;
   const [paperSize, setPaperSize] = React.useState<"A4" | "F4">("A4");
   const printRef = useRef<HTMLDivElement>(null);
 
@@ -104,6 +112,10 @@ export const Step3: React.FC<Step3Props> = ({
             subjectsFontSize={fontSettings.subjectsFontSize}
             homeroomFontSize={fontSettings.homeroomFontSize}
             principalFontSize={fontSettings.principalFontSize}
+            homeroomSignTop={fontSettings.homeroomSignTop}
+            principalSignTop={fontSettings.principalSignTop}
+            homeroomSignSize={fontSettings.homeroomSignSize}
+            principalSignSize={fontSettings.principalSignSize}
             date={meta.date}
             homeroom={meta.homeroom}
             principal={meta.principal}
@@ -392,6 +404,66 @@ export const Step3: React.FC<Step3Props> = ({
                   size="xs"
                 />
               </Group>
+
+              <Text size="sm" pt="xs" fw={500} mb={4}>
+                Homeroom Signature (Top) ({fontSettings.homeroomSignTop}px)
+              </Text>
+              <Group spacing="xs" align="center" grow>
+                <Slider
+                  min={500}
+                  max={800}
+                  step={1}
+                  value={fontSettings.homeroomSignTop}
+                  onChange={(val) =>
+                    setFontSettings((prev) => ({ ...prev, homeroomSignTop: val }))
+                  }
+                />
+                <NumberInput
+                  min={500}
+                  max={800}
+                  step={1}
+                  value={fontSettings.homeroomSignTop}
+                  onChange={(val) =>
+                    typeof val === "number" &&
+                    setFontSettings((prev) => ({
+                      ...prev,
+                      homeroomSignTop: val,
+                    }))
+                  }
+                  w={70}
+                  size="xs"
+                />
+              </Group>
+
+              <Text size="sm" pt="xs" fw={500} mb={4}>
+                Homeroom Signature (Size) ({fontSettings.homeroomSignSize}px)
+              </Text>
+              <Group spacing="xs" align="center" grow>
+                <Slider
+                  min={30}
+                  max={100}
+                  step={1}
+                  value={fontSettings.homeroomSignSize}
+                  onChange={(val) =>
+                    setFontSettings((prev) => ({ ...prev, homeroomSignSize: val }))
+                  }
+                />
+                <NumberInput
+                  min={30}
+                  max={100}
+                  step={1}
+                  value={fontSettings.homeroomSignSize}
+                  onChange={(val) =>
+                    typeof val === "number" &&
+                    setFontSettings((prev) => ({
+                      ...prev,
+                      homeroomSignSize: val,
+                    }))
+                  }
+                  w={70}
+                  size="xs"
+                />
+              </Group>
             </Box>
 
             <Box style={{ width: 220 }}>
@@ -477,6 +549,66 @@ export const Step3: React.FC<Step3Props> = ({
                   size="xs"
                 />
               </Group>
+
+              <Text size="sm" pt="xs" fw={500} mb={4}>
+                Principal Signature (Top) ({fontSettings.principalSignTop}px)
+              </Text>
+              <Group spacing="xs" align="center" grow>
+                <Slider
+                  min={500}
+                  max={800}
+                  step={1}
+                  value={fontSettings.principalSignTop}
+                  onChange={(val) =>
+                    setFontSettings((prev) => ({ ...prev, principalSignTop: val }))
+                  }
+                />
+                <NumberInput
+                  min={500}
+                  max={800}
+                  step={1}
+                  value={fontSettings.principalSignTop}
+                  onChange={(val) =>
+                    typeof val === "number" &&
+                    setFontSettings((prev) => ({
+                      ...prev,
+                      principalSignTop: val,
+                    }))
+                  }
+                  w={70}
+                  size="xs"
+                />
+              </Group>
+
+              <Text size="sm" pt="xs" fw={500} mb={4}>
+                Principal Signature (Size) ({fontSettings.principalSignSize}px)
+              </Text>
+              <Group spacing="xs" align="center" grow>
+                <Slider
+                  min={30}
+                  max={100}
+                  step={1}
+                  value={fontSettings.principalSignSize}
+                  onChange={(val) =>
+                    setFontSettings((prev) => ({ ...prev, principalSignSize: val }))
+                  }
+                />
+                <NumberInput
+                  min={30}
+                  max={100}
+                  step={1}
+                  value={fontSettings.principalSignSize}
+                  onChange={(val) =>
+                    typeof val === "number" &&
+                    setFontSettings((prev) => ({
+                      ...prev,
+                      principalSignSize: val,
+                    }))
+                  }
+                  w={70}
+                  size="xs"
+                />
+              </Group>
             </Box>
           </Group>
         </Stack>
@@ -505,6 +637,10 @@ export const Step3: React.FC<Step3Props> = ({
                 subjectsFontSize={subjectsFontSize}
                 homeroomFontSize={homeroomFontSize}
                 principalFontSize={principalFontSize}
+                homeroomSignTop={homeroomSignTop}
+                principalSignTop={principalSignTop}
+                homeroomSignSize={homeroomSignSize}
+                principalSignSize={principalSignSize}
                 lineHeight={lineHeight}
                 date={meta.date}
                 homeroom={meta.homeroom}

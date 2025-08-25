@@ -11,6 +11,10 @@ type Props = {
   subjectsFontSize: number;
   homeroomFontSize: number;
   principalFontSize: number;
+  homeroomSignTop: number;
+  principalSignTop: number;
+  homeroomSignSize: number;
+  principalSignSize: number;
   date: string;
   homeroom: string;
   principal: string;
@@ -18,7 +22,7 @@ type Props = {
   principalSignature: any;
 };
 
-export const ReportCardPreview: React.FC<Props> = ({ student, paperSize, fontSize, lineHeight, subjectsFontSize, homeroomFontSize, principalFontSize, date, homeroom, principal, homeroomSignature, principalSignature }) => {
+export const ReportCardPreview: React.FC<Props> = ({ student, paperSize, fontSize, lineHeight, subjectsFontSize, homeroomFontSize, principalFontSize, homeroomSignTop, principalSignTop, homeroomSignSize, principalSignSize, date, homeroom, principal, homeroomSignature, principalSignature }) => {
   const width = paperSize === "F4" ? 1248 : 1123;
   const height = 794;
   const backgroundImage = paperSize === "F4" ? templateF4 : templateA4;
@@ -495,10 +499,10 @@ export const ReportCardPreview: React.FC<Props> = ({ student, paperSize, fontSiz
         <Box
           style={{
             position: "absolute",
-            top: 688,
+            top: homeroomSignTop,
             left: 593,
             width: 173,
-            height: 65,
+            height: homeroomSignSize,
             overflow: "hidden",
             display: "flex",
             alignItems: "center",
@@ -522,10 +526,10 @@ export const ReportCardPreview: React.FC<Props> = ({ student, paperSize, fontSiz
         <Box
           style={{
             position: "absolute",
-            top: 688,
+            top: principalSignTop,
             left: 742,
             width: 173,
-            height: 65,
+            height: principalSignSize,
             overflow: "hidden",
             display: "flex",
             alignItems: "center",

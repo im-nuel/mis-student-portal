@@ -32,6 +32,10 @@ export const ImportExcel = () => {
     subjectsFontSize: 11,
     homeroomFontSize: 11,
     principalFontSize: 11,
+    homeroomSignTop: 688,
+    principalSignTop: 688,
+    homeroomSignSize: 65,
+    principalSignSize: 65,
   });
 
   return (
