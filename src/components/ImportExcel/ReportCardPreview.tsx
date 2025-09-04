@@ -2,6 +2,9 @@ import React from "react";
 import { Box, Text } from "@mantine/core";
 import templateA4 from "./ReportTemplateA4.jpg";
 import templateF4 from "./ReportTemplateF4.jpg";
+import templateA4SD from "./ReportTemplateA4SD.jpg";
+import templateA4SMP from "./ReportTemplateA4SMP.jpg";
+import templateA4SMA from "./ReportTemplateA4SMA.jpg";
 
 type Props = {
   student: any;
@@ -15,6 +18,7 @@ type Props = {
   principalSignTop: number;
   homeroomSignSize: number;
   principalSignSize: number;
+  paperTemplate: string;
   date: string;
   homeroom: string;
   principal: string;
@@ -22,10 +26,19 @@ type Props = {
   principalSignature: any;
 };
 
-export const ReportCardPreview: React.FC<Props> = ({ student, paperSize, fontSize, lineHeight, subjectsFontSize, homeroomFontSize, principalFontSize, homeroomSignTop, principalSignTop, homeroomSignSize, principalSignSize, date, homeroom, principal, homeroomSignature, principalSignature }) => {
+export const ReportCardPreview: React.FC<Props> = ({ student, paperSize, fontSize, lineHeight, subjectsFontSize, homeroomFontSize, principalFontSize, homeroomSignTop, principalSignTop, homeroomSignSize, principalSignSize, paperTemplate, date, homeroom, principal, homeroomSignature, principalSignature }) => {
   const width = paperSize === "F4" ? 1248 : 1123;
   const height = 794;
-  const backgroundImage = paperSize === "F4" ? templateF4 : templateA4;
+  
+  let backgroundImage = templateA4SMA;
+
+  if (paperTemplate === "SMP") {
+    backgroundImage = templateA4SMP;
+  } else if (paperTemplate === "SD") {
+    backgroundImage = templateA4SD;
+  }
+
+  // const backgroundImage = paperSize === "F4" ? templateF4 : templateA4;
 
   return (
     <Box

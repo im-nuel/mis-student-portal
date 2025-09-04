@@ -52,6 +52,7 @@ type Step3Props = {
     principalSignTop:number;
     homeroomSignSize: number;
     principalSignSize: number;
+    paperTemplate: string;
   };
   setFontSettings: React.Dispatch<
     React.SetStateAction<{
@@ -64,6 +65,7 @@ type Step3Props = {
       principalSignTop:number;
       homeroomSignSize: number;
       principalSignSize: number;
+      paperTemplate: string;
     }>
   >;
 };
@@ -76,7 +78,7 @@ export const Step3: React.FC<Step3Props> = ({
   fontSettings,
   setFontSettings,
 }) => {
-  const { fontSize, lineHeight, subjectsFontSize, homeroomFontSize, principalFontSize, homeroomSignTop, principalSignTop, homeroomSignSize, principalSignSize } = fontSettings;
+  const { fontSize, lineHeight, subjectsFontSize, homeroomFontSize, principalFontSize, homeroomSignTop, principalSignTop, homeroomSignSize, principalSignSize, paperTemplate } = fontSettings;
   const [paperSize, setPaperSize] = React.useState<"A4" | "F4">("A4");
   const printRef = useRef<HTMLDivElement>(null);
 
@@ -121,6 +123,7 @@ export const Step3: React.FC<Step3Props> = ({
             principal={meta.principal}
             homeroomSignature={meta.homeroomSignature}
             principalSignature={meta.principalSignature}
+            paperTemplate={fontSettings.paperTemplate}
           />
         );
 
@@ -202,6 +205,25 @@ export const Step3: React.FC<Step3Props> = ({
           <Title order={5}>Adjustments</Title>
           <Group align="flex-start" grow noWrap>
             <Stack style={{ flex: 1 }} spacing="md">
+              <Box>
+                <Text size="sm" fw={500} mb={4}>
+                  Report Template
+                </Text>
+                <Select
+                  size="sm"
+                  value={fontSettings.paperTemplate}
+                  onChange={(val) =>
+                    setFontSettings((prev: any) => ({ ...prev, paperTemplate: val || "SMA" }))
+                  }
+                  data={[
+                    { label: "SD - ReportTemplate A4", value: "SD" },
+                    { label: "SMP - ReportTemplate A4", value: "SMP" },
+                    { label: "SMA - ReportTemplate A4", value: "SMA" },
+                  ]}
+                  withinPortal={false}
+                />
+              </Box>
+
               <Box>
                 <Text size="sm" fw={500} mb={4}>
                   Subjects Font Size ({fontSettings.subjectsFontSize}px)
@@ -647,6 +669,7 @@ export const Step3: React.FC<Step3Props> = ({
                 principal={meta.principal}
                 homeroomSignature={meta.homeroomSignature}
                 principalSignature={meta.principalSignature}
+                paperTemplate={paperTemplate}
               />
             ))}
             <Divider mt="lg" />

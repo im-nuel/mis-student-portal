@@ -36,6 +36,7 @@ export const ImportExcel = () => {
     principalSignTop: 688,
     homeroomSignSize: 65,
     principalSignSize: 65,
+    paperTemplate: "SMA",
   });
 
   return (
